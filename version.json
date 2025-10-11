@@ -1,0 +1,7 @@
+{
+	"version": "0.0.47", 
+  "pkg_update": false,
+	"changelog": [
+    "<b>feat (beta):</b> Toggle bar hide/show (default CTRL SUPER + B)"
+  ]
+}
