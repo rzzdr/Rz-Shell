@@ -270,6 +270,10 @@ bind = {bind_vars.get("prefix_caffeine", "SUPER SHIFT")}, {bind_vars.get("suffix
 bind = {bind_vars.get("prefix_toggle", "SUPER CTRL")}, {bind_vars.get("suffix_toggle", "B")}, exec, $fabricSend 'from utils.global_keybinds import get_global_keybind_handler; get_global_keybind_handler().toggle_bar()' # Toggle Bar
 bind = {bind_vars.get("prefix_css", "SUPER SHIFT")}, {bind_vars.get("suffix_css", "B")}, exec, $fabricSend 'app.set_css()' # Reload CSS
 bind = {bind_vars.get("prefix_restart_inspector", "SUPER CTRL ALT")}, {bind_vars.get("suffix_restart_inspector", "B")}, exec, killall {APP_NAME}; uwsm-app $(GTK_DEBUG=interactive python {home}/.config/{APP_NAME_CAP}/main.py) # Restart with inspector
+gesture = 3, down, dispatcher, exec, $fabricSend 'notch.open_notch("dashboard")'
+gesture = 3, up, dispatcher, exec, $fabricSend 'notch.open_notch("overview")'
+gesture = 3, horizontal, workspace
+
 
 # Wallpapers directory: {bind_vars.get("wallpapers_dir", "~/.config/Rz-Shell/assets/wallpapers_example")}
 
