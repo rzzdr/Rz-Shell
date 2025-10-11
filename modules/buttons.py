@@ -393,7 +393,7 @@ class CaffeineButton(Button):
 
     def toggle_inhibit(self, *args, external=False):
         """
-        Toggle the 'ax-inhibit' process:
+        Toggle the 'rz-inhibit' process:
           - If running, kill it and mark as 'Disabled' (add 'disabled' class).
           - If not running, start it and mark as 'Enabled' (remove 'disabled' class).
         """
@@ -402,8 +402,8 @@ class CaffeineButton(Button):
     def _toggle_inhibit_thread(self, external):
         """Background thread to toggle inhibit without blocking UI."""
         try:
-            subprocess.check_output(["pgrep", "ax-inhibit"])
-            exec_shell_command_async("pkill ax-inhibit")
+            subprocess.check_output(["pgrep", "rz-inhibit"])
+            exec_shell_command_async("pkill rz-inhibit")
             GLib.idle_add(self.caffeine_status.set_label, "Disabled")
             GLib.idle_add(self._add_disabled_style)
         except subprocess.CalledProcessError:
@@ -433,7 +433,7 @@ class CaffeineButton(Button):
     def _check_inhibit_thread(self, user_data):
         """Background thread to check inhibit status without blocking UI."""
         try:
-            subprocess.check_output(["pgrep", "ax-inhibit"])
+            subprocess.check_output(["pgrep", "rz-inhibit"])
             GLib.idle_add(self.caffeine_status.set_label, "Enabled")
             GLib.idle_add(self._remove_disabled_style)
         except subprocess.CalledProcessError:

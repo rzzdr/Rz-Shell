@@ -35,7 +35,7 @@ class HyprConfGUI(Window):
     def __init__(self, show_lock_checkbox: bool, show_idle_checkbox: bool, **kwargs):
         super().__init__(
             title="Rz-Shell Settings",
-            name="axshell-settings-window",
+            name="rzshell-settings-window",
             size=(640, 640),
             **kwargs,
         )
@@ -130,7 +130,7 @@ class HyprConfGUI(Window):
         self.entries = []
         bindings = [
             (f"Reload {APP_NAME_CAP}", "prefix_restart", "suffix_restart"),
-            ("Message", "prefix_axmsg", "suffix_axmsg"),
+            ("Message", "prefix_rzmsg", "suffix_rzmsg"),
             ("Dashboard", "prefix_dash", "suffix_dash"),
             ("Bluetooth", "prefix_bluetooth", "suffix_bluetooth"),
             ("Pins", "prefix_pins", "suffix_pins"),

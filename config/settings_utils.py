@@ -248,10 +248,10 @@ exec-once =  wl-paste --type text --watch cliphist store
 exec-once =  wl-paste --type image --watch cliphist store
 
 $fabricSend = fabric-cli exec {APP_NAME}
-$axMessage = notify-send "Rzzdr" "CHALA JA BSDK‼️🗣️🔥🕳️" -i "{home}/.face.icon" -A "🗣️" -A "🔥" -A "🕳️" -a "Source Code"
+$rzMessage = notify-send "Rzzdr" "CHALA JA BSDK‼️🗣️🔥🕳️" -i "{home}/.face.icon" -A "🗣️" -A "🔥" -A "🕳️" -a "Source Code"
 
 bind = {bind_vars.get("prefix_restart", "SUPER ALT")}, {bind_vars.get("suffix_restart", "B")}, exec, killall {APP_NAME}; uwsm-app $(python {home}/.config/{APP_NAME_CAP}/main.py) # Reload {APP_NAME_CAP}
-bind = {bind_vars.get("prefix_axmsg", "SUPER")}, {bind_vars.get("suffix_axmsg", "A")}, exec, $axMessage # Message
+bind = {bind_vars.get("prefix_rzmsg", "SUPER")}, {bind_vars.get("suffix_rzmsg", "A")}, exec, $rzMessage # Message
 bind = {bind_vars.get("prefix_dash", "SUPER")}, {bind_vars.get("suffix_dash", "D")}, exec, $fabricSend 'notch.open_notch("dashboard")' # Dashboard
 bind = {bind_vars.get("prefix_bluetooth", "SUPER")}, {bind_vars.get("suffix_bluetooth", "B")}, exec, $fabricSend 'notch.open_notch("bluetooth")' # Bluetooth
 bind = {bind_vars.get("prefix_pins", "SUPER")}, {bind_vars.get("suffix_pins", "Q")}, exec, $fabricSend 'notch.open_notch("pins")' # Pins

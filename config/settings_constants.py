@@ -16,8 +16,8 @@ source = ~/.config/{APP_NAME_CAP}/config/hypr/{APP_NAME}.conf
 DEFAULTS = {
     "prefix_restart": "SUPER ALT",
     "suffix_restart": "B",
-    "prefix_axmsg": "SUPER",
-    "suffix_axmsg": "A",
+    "prefix_rzmsg": "SUPER",
+    "suffix_rzmsg": "A",
     "prefix_dash": "SUPER",
     "suffix_dash": "D",
     "prefix_bluetooth": "SUPER",
