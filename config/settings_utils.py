@@ -271,8 +271,9 @@ bind = {bind_vars.get("prefix_toggle", "SUPER CTRL")}, {bind_vars.get("suffix_to
 bind = {bind_vars.get("prefix_css", "SUPER SHIFT")}, {bind_vars.get("suffix_css", "B")}, exec, $fabricSend 'app.set_css()' # Reload CSS
 bind = {bind_vars.get("prefix_restart_inspector", "SUPER CTRL ALT")}, {bind_vars.get("suffix_restart_inspector", "B")}, exec, killall {APP_NAME}; uwsm-app $(GTK_DEBUG=interactive python {home}/.config/{APP_NAME_CAP}/main.py) # Restart with inspector
 gesture = 3, down, dispatcher, exec, $fabricSend 'notch.open_notch("dashboard")'
-gesture = 3, up, dispatcher, exec, $fabricSend 'notch.open_notch("overview")'
 gesture = 3, horizontal, workspace
+gesture = 4, down, dispatcher, exec, fabric-cli exec rz-shell 'notch.open_notch("overview")'
+gesture = 3, up, dispatcher, exec, fabric-cli exec rz-shell 'notch.close_notch()'
 
 
 # Wallpapers directory: {bind_vars.get("wallpapers_dir", "~/.config/Rz-Shell/assets/wallpapers_example")}
