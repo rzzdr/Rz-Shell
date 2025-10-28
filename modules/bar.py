@@ -594,11 +594,14 @@ class Bar(Window):
             self.notch.open_notch("tools")
 
     def on_language_switch(self, _=None, event: HyprlandEvent = None):
-        lang_data = (
-            event.data[1]
-            if event and event.data and len(event.data) > 1
-            else Language().get_label()
-        )
+        try:
+            lang_data = (
+                event.data[1]
+                if event and event.data and len(event.data) > 1
+                else Language().get_label()
+            )
+        except json.JSONDecodeError:
+            lang_data = "UNK"  # Fallback to default language label
         self.language.set_tooltip_text(lang_data)
         if not data.VERTICAL:
             self.lang_label.set_label(lang_data[:3].upper())
