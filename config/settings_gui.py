@@ -23,10 +23,6 @@ from PIL import Image
 from .data import (
     APP_NAME,
     APP_NAME_CAP,
-    NOTIF_POS_DEFAULT,
-    NOTIF_POS_KEY,
-    PANEL_POSITION_DEFAULT,
-    PANEL_POSITION_KEY,
 )
 from .settings_utils import backup_and_replace, bind_vars, start_config
 
@@ -500,7 +496,7 @@ class HyprConfGUI(Window):
             self.panel_position_combo.append_text(option)
 
         current_panel_position = bind_vars.get(
-            PANEL_POSITION_KEY, PANEL_POSITION_DEFAULT
+            "panel_position", "Center"
         )
         try:
             self.panel_position_combo.set_active(
@@ -509,7 +505,7 @@ class HyprConfGUI(Window):
         except ValueError:
             try:
                 self.panel_position_combo.set_active(
-                    self.panel_position_options.index(PANEL_POSITION_DEFAULT)
+                    self.panel_position_options.index("Center")
                 )
             except ValueError:
                 self.panel_position_combo.set_active(0)
@@ -537,7 +533,7 @@ class HyprConfGUI(Window):
         for pos in notification_positions_list:
             self.notification_pos_combo.append_text(pos)
 
-        current_notif_pos = bind_vars.get(NOTIF_POS_KEY, NOTIF_POS_DEFAULT)
+        current_notif_pos = bind_vars.get("notif_pos", "Top")
         try:
             self.notification_pos_combo.set_active(
                 notification_positions_list.index(current_notif_pos)
@@ -643,9 +639,9 @@ class HyprConfGUI(Window):
     def on_notification_position_changed(self, combo: Gtk.ComboBoxText):
         selected_text = combo.get_active_text()
         if selected_text:
-            bind_vars[NOTIF_POS_KEY] = selected_text
+            bind_vars["notif_pos"] = selected_text
             print(
-                f"Notification position updated in bind_vars: {bind_vars[NOTIF_POS_KEY]}"
+                f"Notification position updated in bind_vars: {bind_vars['notif_pos']}"
             )
 
     def create_system_tab(self):
@@ -1070,14 +1066,14 @@ class HyprConfGUI(Window):
         current_bind_vars_snapshot["panel_theme"] = (
             self.panel_theme_combo.get_active_text()
         )
-        current_bind_vars_snapshot[PANEL_POSITION_KEY] = (
+        current_bind_vars_snapshot["panel_position"] = (
             self.panel_position_combo.get_active_text()
         )
         selected_notif_pos_text = self.notification_pos_combo.get_active_text()
         if selected_notif_pos_text:
-            current_bind_vars_snapshot[NOTIF_POS_KEY] = selected_notif_pos_text
+            current_bind_vars_snapshot["notif_pos"] = selected_notif_pos_text
         else:
-            current_bind_vars_snapshot[NOTIF_POS_KEY] = NOTIF_POS_DEFAULT
+            current_bind_vars_snapshot["notif_pos"] = "Top"
 
         for component_name, switch in self.component_switches.items():
             current_bind_vars_snapshot[f"bar_{component_name}_visible"] = (
@@ -1381,7 +1377,7 @@ class HyprConfGUI(Window):
                 self.panel_theme_combo.set_active(0)
 
             default_panel_position_val = DEFAULTS.get(
-                PANEL_POSITION_KEY, PANEL_POSITION_DEFAULT
+                "panel_position", "Center"
             )
             try:
                 self.panel_position_combo.set_active(
@@ -1390,12 +1386,12 @@ class HyprConfGUI(Window):
             except ValueError:
                 try:
                     self.panel_position_combo.set_active(
-                        self.panel_position_options.index(PANEL_POSITION_DEFAULT)
+                        self.panel_position_options.index("Center")
                     )
                 except ValueError:
                     self.panel_position_combo.set_active(0)
 
-            default_notif_pos_val = DEFAULTS.get(NOTIF_POS_KEY, NOTIF_POS_DEFAULT)
+            default_notif_pos_val = DEFAULTS.get("notif_pos", "Top")
             notification_positions_list = ["Top", "Bottom"]
             try:
                 self.notification_pos_combo.set_active(

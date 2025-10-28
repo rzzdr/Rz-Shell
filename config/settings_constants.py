@@ -1,3 +1,5 @@
+from fabric.utils.helpers import get_relative_path
+
 from .data import (
     APP_NAME,
     APP_NAME_CAP,
@@ -52,7 +54,7 @@ DEFAULTS = {
     "suffix_toggle": "B",
     "prefix_css": "SUPER SHIFT",
     "suffix_css": "B",
-    "wallpapers_dir": WALLPAPERS_DIR_DEFAULT,
+    "wallpapers_dir": get_relative_path("../assets/wallpapers_example"),
     "prefix_restart_inspector": "SUPER CTRL ALT",
     "suffix_restart_inspector": "B",
     "bar_position": "Top",
@@ -70,8 +72,8 @@ DEFAULTS = {
     "bar_theme": "Pills",
     "dock_theme": "Pills",
     "panel_theme": "Notch",
-    PANEL_POSITION_KEY: PANEL_POSITION_DEFAULT,
-    NOTIF_POS_KEY: NOTIF_POS_DEFAULT,
+    "panel_position": "Center",
+    "notif_pos": "Top",
     "bar_button_apps_visible": True,
     "bar_systray_visible": True,
     "bar_control_visible": True,

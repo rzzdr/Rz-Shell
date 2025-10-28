@@ -10,12 +10,6 @@ from gi.repository import Gdk, GLib
 APP_NAME = "rz-shell"
 APP_NAME_CAP = "Rz-Shell"
 
-
-PANEL_POSITION_KEY = "panel_position"
-PANEL_POSITION_DEFAULT = "Center"
-NOTIF_POS_KEY = "notif_pos"
-NOTIF_POS_DEFAULT = "Top"
-
 CACHE_DIR = str(GLib.get_user_cache_dir()) + f"/{APP_NAME}"
 
 USERNAME = os.getlogin()
@@ -28,20 +22,8 @@ screen = Gdk.Screen.get_default()
 CURRENT_WIDTH = screen.get_width()
 CURRENT_HEIGHT = screen.get_height()
 
-
-WALLPAPERS_DIR_DEFAULT = get_relative_path("../assets/wallpapers_example")
 CONFIG_FILE = get_relative_path("../config/config.json")
 MATUGEN_STATE_FILE = os.path.join(CONFIG_DIR, "matugen")
-
-
-BAR_WORKSPACE_USE_CHINESE_NUMERALS = False
-BAR_THEME = "Pills"
-
-DOCK_THEME = "Pills"
-
-PANEL_THEME = "Notch"
-DATETIME_12H_FORMAT = False  # Default value if config file doesn't exist
-
 
 def load_config():
     """Load the configuration from config.json"""
@@ -87,8 +69,8 @@ BAR_THEME = config.get("bar_theme", DEFAULTS["bar_theme"])
 DOCK_THEME = config.get("dock_theme", DEFAULTS["dock_theme"])
 PANEL_THEME = config.get("panel_theme", DEFAULTS["panel_theme"])
 
-PANEL_POSITION = config.get(PANEL_POSITION_KEY, DEFAULTS[PANEL_POSITION_KEY])
-NOTIF_POS = config.get(NOTIF_POS_KEY, DEFAULTS[NOTIF_POS_KEY])
+PANEL_POSITION = config.get("panel_position", DEFAULTS["panel_position"])
+NOTIF_POS = config.get("notif_pos", DEFAULTS["notif_pos"])
 
 BAR_COMPONENTS_VISIBILITY = {
     "button_apps": config.get("bar_button_apps_visible", DEFAULTS["bar_button_apps_visible"]),
