@@ -312,6 +312,12 @@ class AppLauncher(Box):
                 self.notch.open_notch("power")
             case ":update":
                 GLib.idle_add(lambda: run_updater(force=True))
+            case ":settings":
+                exec_shell_command_async(f"python {get_relative_path('../config/config.py')}")
+                self.close_launcher()
+            case ":config":
+                exec_shell_command_async(f"python {get_relative_path('../config/config.py')}")
+                self.close_launcher()
             case _:
                 children = self.viewport.get_children()
                 if children:
