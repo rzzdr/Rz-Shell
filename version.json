@@ -1,7 +1,11 @@
 {
-	"version": "0.0.52", 
+	"version": "0.0.53", 
   "pkg_update": false,
 	"changelog": [
-    "<b>tweak:</b> Notch now in overlay layer"
+    "<b>fix:</b> Mixer UX improvements (<a href='https://github.com/Axenide/Ax-Shell/pull/290'>#290</a>)",
+    "<b>fix:</b> Icon refresh events (<a href='https://github.com/Axenide/Ax-Shell/pull/297'>#297</a>)",
+    "<b>fix:</b> Improved config reading with helper functions (<a href='https://github.com/Axenide/Ax-Shell/pull/298'>#298</a>)",
+    "<b>fix:</b> Prevent excessive calls to update_dock (<a href='https://github.com/Axenide/Ax-Shell/pull/300'>#300</a>)",
+    "<b>fix:</b> Cavalcade optimizations and fix for multi-screen (<a href='https://github.com/Axenide/Ax-Shell/pull/271'>#271</a>, <a href='https://github.com/Axenide/Ax-Shell/pull/287'>#287</a>)"
   ]
 }

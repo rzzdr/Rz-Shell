@@ -292,9 +292,6 @@ class Dock(Window):
             self.conn.connect("event::ready", self.update_dock)
             if not self.integrated_mode: self.conn.connect("event::ready", lambda *args: GLib.timeout_add(250, self.check_occlusion_state))
 
-        for ev in ("activewindow", "openwindow", "closewindow", "changefloatingmode"):
-            self.conn.connect(f"event::{ev}", self.update_dock)
-        
         if not self.integrated_mode:
             self.conn.connect("event::workspace", self.check_hide)
         
