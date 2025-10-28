@@ -14,14 +14,13 @@ from gi.repository import GLib
 
 from . import settings_constants
 from .data import (
-    APP_NAME, APP_NAME_CAP)
+    APP_NAME, APP_NAME_CAP, get_default)
 
 # Global variable to store binding variables, managed by this module
 bind_vars = {} 
 
 def get_bind_var(setting_str: str):
-    default = settings_constants.DEFAULTS[setting_str] if setting_str in settings_constants.DEFAULTS else ""
-    return bind_vars.get(setting_str, default)
+    return bind_vars.get(setting_str, get_default(setting_str))
 
 
 def deep_update(target: dict, update: dict) -> dict:

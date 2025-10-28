@@ -52,6 +52,9 @@ if os.path.exists(CONFIG_FILE):
     except Exception as e:
         print(f"Error loading config file: {e}")
 
+def get_default(setting_str: str):
+    return DEFAULTS[setting_str] if setting_str in DEFAULTS else ""
+
 # Set configuration values using defaults from settings_constants
 WALLPAPERS_DIR = config.get("wallpapers_dir", DEFAULTS["wallpapers_dir"])
 BAR_POSITION = config.get("bar_position", DEFAULTS["bar_position"])

@@ -24,7 +24,7 @@ from .data import (
     APP_NAME,
     APP_NAME_CAP,
 )
-from .settings_utils import backup_and_replace, bind_vars, get_bind_var, start_config
+from .settings_utils import backup_and_replace, bind_vars, get_bind_var, get_default, start_config
 
 
 class HyprConfGUI(Window):
@@ -1310,7 +1310,7 @@ class HyprConfGUI(Window):
             )
 
             positions = ["Top", "Bottom", "Left", "Right"]
-            default_position = DEFAULTS.get("bar_position", "Top")
+            default_position = get_default("bar_position")
             try:
                 self.position_combo.set_active(positions.index(default_position))
             except ValueError:
@@ -1351,21 +1351,21 @@ class HyprConfGUI(Window):
             self.special_ws_switch.set_active(
                 settings_utils.get_bind_var("bar_hide_special_workspace")
             )
-
-            default_theme_val = DEFAULTS.get("bar_theme", "Pills")
+    
+            default_theme_val = get_default("bar_theme")
             themes = ["Pills", "Dense", "Edge"]
             try:
                 self.bar_theme_combo.set_active(themes.index(default_theme_val))
             except ValueError:
                 self.bar_theme_combo.set_active(0)
 
-            default_dock_theme_val = DEFAULTS.get("dock_theme", "Pills")
+            default_dock_theme_val = get_default("dock_theme")
             try:
                 self.dock_theme_combo.set_active(themes.index(default_dock_theme_val))
             except ValueError:
                 self.dock_theme_combo.set_active(0)
 
-            default_panel_theme_val = DEFAULTS.get("panel_theme", "Notch")
+            default_panel_theme_val = get_default("panel_theme")
             panel_themes_options = ["Notch", "Panel"]
             try:
                 self.panel_theme_combo.set_active(
@@ -1374,9 +1374,7 @@ class HyprConfGUI(Window):
             except ValueError:
                 self.panel_theme_combo.set_active(0)
 
-            default_panel_position_val = DEFAULTS.get(
-                "panel_position", "Center"
-            )
+            default_panel_position_val = get_default("panel_position")
             try:
                 self.panel_position_combo.set_active(
                     self.panel_position_options.index(default_panel_position_val)
@@ -1389,7 +1387,7 @@ class HyprConfGUI(Window):
                 except ValueError:
                     self.panel_position_combo.set_active(0)
 
-            default_notif_pos_val = DEFAULTS.get("notif_pos", "Top")
+            default_notif_pos_val = get_default("notif_pos")
             notification_positions_list = ["Top", "Bottom"]
             try:
                 self.notification_pos_combo.set_active(
@@ -1406,11 +1404,11 @@ class HyprConfGUI(Window):
                 settings_utils.get_bind_var("corners_visible")
             )
 
-            metrics_vis_defaults = DEFAULTS.get("metrics_visible", {})
+            metrics_vis_defaults = get_default("metrics_visible")
             for k, s_widget in self.metrics_switches.items():
                 s_widget.set_active(metrics_vis_defaults.get(k, True))
 
-            metrics_small_vis_defaults = DEFAULTS.get("metrics_small_visible", {})
+            metrics_small_vis_defaults = get_default("metrics_small_visible")
             for k, s_widget in self.metrics_small_switches.items():
                 s_widget.set_active(metrics_small_vis_defaults.get(k, True))
 
@@ -1432,20 +1430,20 @@ class HyprConfGUI(Window):
             for child in list(self.disk_entries.get_children()):
                 self.disk_entries.remove(child)
 
-            for p in DEFAULTS.get("bar_metrics_disks", ["/"]):
+            for p in get_default("bar_metrics_disks"):
                 self._add_disk_edit_entry_func(p)
 
             # Reset notification app lists
-            limited_apps_list = DEFAULTS.get("limited_apps_history", ["Spotify"])
+            limited_apps_list = get_default("limited_apps_history")
             limited_apps_text = ", ".join(f'"{app}"' for app in limited_apps_list)
             self.limited_apps_entry.set_text(limited_apps_text)
 
-            ignored_apps_list = DEFAULTS.get("history_ignored_apps", ["Hyprshot"])
+            ignored_apps_list = get_default("history_ignored_apps")
             ignored_apps_text = ", ".join(f'"{app}"' for app in ignored_apps_list)
             self.ignored_apps_entry.set_text(ignored_apps_text)
 
             # Reset monitor selection
-            default_monitors = DEFAULTS.get("selected_monitors", [])
+            default_monitors = get_default("selected_monitors")
             for monitor_name, checkbox in self.monitor_checkboxes.items():
                 # If defaults is empty, check all monitors (show on all)
                 is_selected = len(default_monitors) == 0 or monitor_name in default_monitors
