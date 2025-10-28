@@ -25,6 +25,7 @@ CURRENT_HEIGHT = screen.get_height()
 CONFIG_FILE = get_relative_path("../config/config.json")
 MATUGEN_STATE_FILE = os.path.join(CONFIG_DIR, "matugen")
 
+
 def load_config():
     """Load the configuration from config.json"""
     config_path = os.path.expanduser(f"~/.config/{APP_NAME_CAP}/config/config.json")
@@ -52,11 +53,14 @@ if os.path.exists(CONFIG_FILE):
     except Exception as e:
         print(f"Error loading config file: {e}")
 
+
 def get_default(setting_str: str):
     return DEFAULTS[setting_str] if setting_str in DEFAULTS else ""
 
+
 def _get_config_var(setting_str: str):
     return config.get(setting_str, get_default(setting_str))
+
 
 # Set configuration values using defaults from settings_constants
 WALLPAPERS_DIR = _get_config_var("wallpapers_dir")
@@ -69,7 +73,9 @@ DOCK_ENABLED = _get_config_var("dock_enabled")
 DOCK_ALWAYS_SHOW = _get_config_var("dock_always_show")
 DOCK_ICON_SIZE = _get_config_var("dock_icon_size")
 BAR_WORKSPACE_SHOW_NUMBER = _get_config_var("bar_workspace_show_number")
-BAR_WORKSPACE_USE_CHINESE_NUMERALS = _get_config_var("bar_workspace_use_chinese_numerals")
+BAR_WORKSPACE_USE_CHINESE_NUMERALS = _get_config_var(
+    "bar_workspace_use_chinese_numerals"
+)
 BAR_HIDE_SPECIAL_WORKSPACE = _get_config_var("bar_hide_special_workspace")
 BAR_THEME = _get_config_var("bar_theme")
 DOCK_THEME = _get_config_var("dock_theme")

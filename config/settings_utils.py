@@ -14,10 +14,13 @@ from gi.repository import GLib
 
 from . import settings_constants
 from .data import (
-    APP_NAME, APP_NAME_CAP, get_default)
+    APP_NAME,
+    APP_NAME_CAP,
+    get_default,
+)
 
 # Global variable to store binding variables, managed by this module
-bind_vars = {} 
+bind_vars = {}
 
 def get_bind_var(setting_str: str):
     return bind_vars.get(setting_str, get_default(setting_str))
@@ -210,7 +213,7 @@ def load_bind_vars():
                         default_sub_dict = settings_constants.DEFAULTS[vis_key]
                         # Si la clave no está en bind_vars o no es un diccionario después de deep_update,
                         # restaurarla desde una copia de DEFAULTS para esa clave.
-                        if not isinstance(get_bind_var(vis_key), dict):
+                        if not isinstance(bind_vars.get(vis_key), dict):
                             bind_vars[vis_key] = default_sub_dict.copy()
                         else:
                             # Si es un diccionario, asegurar que todas las sub-claves de DEFAULTS estén presentes.

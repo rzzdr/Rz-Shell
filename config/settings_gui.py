@@ -24,7 +24,13 @@ from .data import (
     APP_NAME,
     APP_NAME_CAP,
 )
-from .settings_utils import backup_and_replace, bind_vars, get_bind_var, get_default, start_config
+from .settings_utils import (
+    backup_and_replace,
+    bind_vars,
+    get_bind_var,
+    get_default,
+    start_config,
+)
 
 
 class HyprConfGUI(Window):
@@ -614,9 +620,7 @@ class HyprConfGUI(Window):
                 halign=Gtk.Align.START,
                 valign=Gtk.Align.CENTER,
             )
-            component_switch = Gtk.Switch(
-                active=get_bind_var(f"bar_{name}_visible")
-            )
+            component_switch = Gtk.Switch(active=get_bind_var(f"bar_{name}_visible"))
             switch_container.add(component_switch)
             components_grid.attach(switch_container, col + 1, row, 1, 1)
             self.component_switches[name] = component_switch
@@ -639,7 +643,7 @@ class HyprConfGUI(Window):
         if selected_text:
             bind_vars["notif_pos"] = selected_text
             print(
-                f"Notification position updated in bind_vars: {bind_vars['notif_pos']}"
+                f"Notification position updated in bind_vars: {bind_vars["notif_pos"]}"
             )
 
     def create_system_tab(self):
@@ -681,50 +685,55 @@ class HyprConfGUI(Window):
         # Monitor Selection - second option
         monitor_header = Label(markup="<b>Monitor Selection</b>", h_align="start")
         system_grid.attach(monitor_header, 0, 1, 2, 1)
-        
+
         monitor_label = Label(
             label="Show Rz-Shell on monitors:", h_align="start", v_align="center"
         )
         system_grid.attach(monitor_label, 0, 2, 1, 1)
-        
+
         # Create monitor selection container
-        self.monitor_selection_container = Box(orientation="v", spacing=5, h_align="start")
+        self.monitor_selection_container = Box(
+            orientation="v", spacing=5, h_align="start"
+        )
         self.monitor_checkboxes = {}
-        
+
         # Get available monitors
         try:
             from utils.monitor_manager import get_monitor_manager
+
             monitor_manager = get_monitor_manager()
             available_monitors = monitor_manager.get_monitors()
         except (ImportError, Exception) as e:
             print(f"Could not get monitor info for settings: {e}")
-            available_monitors = [{'id': 0, 'name': 'default'}]
-        
+            available_monitors = [{"id": 0, "name": "default"}]
+
         # Get current selection from config
         current_selection = get_bind_var("selected_monitors")
-        
+
         # Create checkboxes for each monitor
         for monitor in available_monitors:
-            monitor_name = monitor.get('name', f'monitor-{monitor.get("id", 0)}')
-            
+            monitor_name = monitor.get("name", f'monitor-{monitor.get("id", 0)}')
+
             checkbox_container = Box(orientation="h", spacing=5, h_align="start")
             checkbox = Gtk.CheckButton(label=monitor_name)
-            
+
             # Check if this monitor is selected (empty selection means all selected)
-            is_selected = len(current_selection) == 0 or monitor_name in current_selection
+            is_selected = (
+                len(current_selection) == 0 or monitor_name in current_selection
+            )
             checkbox.set_active(is_selected)
-            
+
             checkbox_container.add(checkbox)
             self.monitor_selection_container.add(checkbox_container)
             self.monitor_checkboxes[monitor_name] = checkbox
-        
+
         # Add hint label
         hint_label = Label(
             markup="<small>Leave all unchecked to show on all monitors</small>",
             h_align="start",
         )
         self.monitor_selection_container.add(hint_label)
-        
+
         system_grid.attach(self.monitor_selection_container, 1, 2, 1, 1)
 
         terminal_header = Label(markup="<b>Terminal Settings</b>", h_align="start")
@@ -856,9 +865,7 @@ class HyprConfGUI(Window):
 
         metrics_grid.attach(Label(label="Show in Metrics", h_align="start"), 0, 0, 1, 1)
         for i, (key, label_text) in enumerate(metric_names.items()):
-            switch = Gtk.Switch(
-                active=get_bind_var("metrics_visible").get(key, True)
-            )
+            switch = Gtk.Switch(active=get_bind_var("metrics_visible").get(key, True))
             self.metrics_switches[key] = switch
             metrics_grid.attach(
                 Label(label=label_text, h_align="start"), 0, i + 1, 1, 1
@@ -1046,7 +1053,9 @@ class HyprConfGUI(Window):
         )
         current_bind_vars_snapshot["dock_icon_size"] = int(self.dock_size_scale.value)
         current_bind_vars_snapshot["terminal_command"] = self.terminal_entry.get_text()
-        current_bind_vars_snapshot["auto_append_hyprland"] = self.auto_append_switch.get_active()
+        current_bind_vars_snapshot["auto_append_hyprland"] = (
+            self.auto_append_switch.get_active()
+        )
         current_bind_vars_snapshot["corners_visible"] = self.corners_switch.get_active()
         current_bind_vars_snapshot["bar_workspace_show_number"] = (
             self.ws_num_switch.get_active()
@@ -1122,9 +1131,11 @@ class HyprConfGUI(Window):
             if checkbox.get_active():
                 selected_monitors.append(monitor_name)
                 any_checked = True
-        
+
         # If no monitors are checked, use empty array (means show on all monitors)
-        current_bind_vars_snapshot["selected_monitors"] = selected_monitors if any_checked else []
+        current_bind_vars_snapshot["selected_monitors"] = (
+            selected_monitors if any_checked else []
+        )
 
         selected_icon_path = self.selected_face_icon
         replace_lock = self.lock_switch and self.lock_switch.get_active()
@@ -1204,7 +1215,9 @@ class HyprConfGUI(Window):
                 from .settings_constants import SOURCE_STRING
 
                 # Check if auto-append is enabled
-                auto_append_enabled = current_bind_vars_snapshot.get("auto_append_hyprland", True)
+                auto_append_enabled = current_bind_vars_snapshot.get(
+                    "auto_append_hyprland", True
+                )
                 if auto_append_enabled:
                     needs_append = True
                     if os.path.exists(hypr_path):
@@ -1316,42 +1329,26 @@ class HyprConfGUI(Window):
             except ValueError:
                 self.position_combo.set_active(0)
 
-            self.centered_switch.set_active(
-                settings_utils.get_bind_var("centered_bar")
-            )
+            self.centered_switch.set_active(get_bind_var("centered_bar"))
             self.centered_switch.set_sensitive(default_position in ["Left", "Right"])
 
-            self.datetime_12h_switch.set_active(
-                settings_utils.get_bind_var("datetime_12h_format")
-            )
+            self.datetime_12h_switch.set_active(get_bind_var("datetime_12h_format"))
 
-            self.dock_switch.set_active(
-                settings_utils.get_bind_var("dock_enabled")
-            )
-            self.dock_hover_switch.set_active(
-                settings_utils.get_bind_var("dock_always_show")
-            )
+            self.dock_switch.set_active(get_bind_var("dock_enabled"))
+            self.dock_hover_switch.set_active(get_bind_var("dock_always_show"))
             self.dock_hover_switch.set_sensitive(self.dock_switch.get_active())
-            self.dock_size_scale.set_value(
-                settings_utils.get_bind_var("dock_icon_size")
-            )
+            self.dock_size_scale.set_value(get_bind_var("dock_icon_size"))
             self.terminal_entry.set_text(settings_utils.bind_vars["terminal_command"])
-            self.auto_append_switch.set_active(
-                settings_utils.get_bind_var("auto_append_hyprland")
-            )
-            self.ws_num_switch.set_active(
-                settings_utils.get_bind_var("bar_workspace_show_number")
-            )
+            self.auto_append_switch.set_active(get_bind_var("auto_append_hyprland"))
+            self.ws_num_switch.set_active(get_bind_var("bar_workspace_show_number"))
             self.ws_chinese_switch.set_active(
-                settings_utils.get_bind_var(
-                    "bar_workspace_use_chinese_numerals"
-                )
+                get_bind_var("bar_workspace_use_chinese_numerals")
             )
             self.ws_chinese_switch.set_sensitive(self.ws_num_switch.get_active())
             self.special_ws_switch.set_active(
-                settings_utils.get_bind_var("bar_hide_special_workspace")
+                get_bind_var("bar_hide_special_workspace")
             )
-    
+
             default_theme_val = get_default("bar_theme")
             themes = ["Pills", "Dense", "Edge"]
             try:
@@ -1397,12 +1394,8 @@ class HyprConfGUI(Window):
                 self.notification_pos_combo.set_active(0)
 
             for name, switch in self.component_switches.items():
-                switch.set_active(
-                    settings_utils.get_bind_var(f"bar_{name}_visible")
-                )
-            self.corners_switch.set_active(
-                settings_utils.get_bind_var("corners_visible")
-            )
+                switch.set_active(get_bind_var(f"bar_{name}_visible"))
+            self.corners_switch.set_active(get_bind_var("corners_visible"))
 
             metrics_vis_defaults = get_default("metrics_visible")
             for k, s_widget in self.metrics_switches.items():
@@ -1446,7 +1439,9 @@ class HyprConfGUI(Window):
             default_monitors = get_default("selected_monitors")
             for monitor_name, checkbox in self.monitor_checkboxes.items():
                 # If defaults is empty, check all monitors (show on all)
-                is_selected = len(default_monitors) == 0 or monitor_name in default_monitors
+                is_selected = (
+                    len(default_monitors) == 0 or monitor_name in default_monitors
+                )
                 checkbox.set_active(is_selected)
 
             self._update_panel_position_sensitivity()
