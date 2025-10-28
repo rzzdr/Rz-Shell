@@ -1,7 +1,7 @@
 {
-	"version": "0.0.51", 
+	"version": "0.0.52", 
   "pkg_update": false,
 	"changelog": [
-    "<b>tweak:</b> Raise notch window to ensure visibility on top of the bar."
+    "<b>tweak:</b> Notch now in overlay layer"
   ]
 }
