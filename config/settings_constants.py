@@ -3,11 +3,6 @@ from fabric.utils.helpers import get_relative_path
 from .data import (
     APP_NAME,
     APP_NAME_CAP,
-    NOTIF_POS_DEFAULT,
-    NOTIF_POS_KEY,
-    PANEL_POSITION_DEFAULT,
-    PANEL_POSITION_KEY,
-    WALLPAPERS_DIR_DEFAULT,
 )
 
 SOURCE_STRING = f"""
