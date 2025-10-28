@@ -1,7 +1,7 @@
 {
-	"version": "0.0.47", 
+	"version": "0.0.50", 
   "pkg_update": false,
 	"changelog": [
-    "<b>feat (beta):</b> Toggle bar hide/show (default CTRL SUPER + B)"
+    "<b>added:</b> Command to open settings in the launcher (:settings and :config do the same)."
   ]
 }
