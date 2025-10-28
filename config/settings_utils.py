@@ -248,7 +248,7 @@ exec-once =  wl-paste --type text --watch cliphist store
 exec-once =  wl-paste --type image --watch cliphist store
 
 $fabricSend = fabric-cli exec {APP_NAME}
-$rzMessage = notify-send "Rzzdr" "CHALA JA BSDK‼️🗣️🔥🕳️" -i "{home}/.face.icon" -A "🗣️" -A "🔥" -A "🕳️" -a "Source Code"
+$rzMessage = notify-send "Rzzdr" "Are you ok Baby?‼️🗣️🔥🕳️" -i "{home}/.face.icon" -A "🗣️" -A "🔥" -A "🕳️" -a "Source Code"
 
 bind = {bind_vars.get("prefix_restart", "SUPER ALT")}, {bind_vars.get("suffix_restart", "B")}, exec, killall {APP_NAME}; uwsm-app $(python {home}/.config/{APP_NAME_CAP}/main.py) # Reload {APP_NAME_CAP}
 bind = {bind_vars.get("prefix_rzmsg", "SUPER")}, {bind_vars.get("suffix_rzmsg", "A")}, exec, $rzMessage # Message
