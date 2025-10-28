@@ -127,7 +127,6 @@ class BrightnessSlider(Scale):
         self._debounce_timeout = 100
 
         self.connect("change-value", self.on_scale_move)
-        self.connect("scroll-event", self.on_scroll)
         self.client.connect("screen", self.on_brightness_changed)
 
     def on_scale_move(self, widget, scroll, moved_pos):
@@ -150,26 +149,6 @@ class BrightnessSlider(Scale):
         else:
             self._update_source_id = None
             return False
-
-    def on_scroll(self, widget, event):
-        current_value = self.get_value()
-        step_size = 1
-        if event.direction == Gdk.ScrollDirection.SMOOTH:
-            if event.delta_y < 0:
-                new_value = min(current_value + step_size, self.client.max_screen)
-            elif event.delta_y > 0:
-                new_value = max(current_value - step_size, 0)
-            else:
-                return False
-        else:
-            if event.direction == Gdk.ScrollDirection.UP:
-                new_value = min(current_value + step_size, self.client.max_screen)
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                new_value = max(current_value - step_size, 0)
-            else:
-                return False
-        self.set_value(new_value)
-        return True
 
     def on_brightness_changed(self, client, _):
         self._updating_from_brightness = True
