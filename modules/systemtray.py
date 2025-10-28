@@ -12,7 +12,7 @@ import config.data as data
 logger = logging.getLogger(__name__)
 
 class SystemTray(Box):
-    def __init__(self, pixel_size: int = 20, refresh_interval: int = 1, **kwargs) -> None:
+    def __init__(self, pixel_size: int = 20, **kwargs) -> None:
         orientation = Gtk.Orientation.HORIZONTAL if not data.VERTICAL else Gtk.Orientation.VERTICAL
         super().__init__(
             name="systray",
@@ -23,15 +23,11 @@ class SystemTray(Box):
         self.enabled = True
         super().set_visible(False)
         self.pixel_size = pixel_size
-        self.refresh_interval = refresh_interval
-
         self.buttons_by_id = {}
         self.items_by_id = {}
 
         self.watcher = Gray.Watcher()
         self.watcher.connect("item-added", self.on_watcher_item_added)
-
-        GLib.timeout_add_seconds(self.refresh_interval, self._refresh_all_items)
 
     def set_visible(self, visible: bool):
         self.enabled = visible
@@ -71,7 +67,7 @@ class SystemTray(Box):
                 "image-missing", self.pixel_size, Gtk.IconLookupFlags.FORCE_SIZE
             )
 
-    def _refresh_item_ui(self, identifier: str, item: Gray.Item, button: Gtk.Button):
+    def _refresh_item_ui(self, item: Gray.Item, button: Gtk.Button):
         pixbuf = self._get_item_pixbuf(item)
         img = button.get_image()
         if isinstance(img, Gtk.Image):
@@ -90,14 +86,6 @@ class SystemTray(Box):
         else:
             button.set_has_tooltip(False)
 
-    def _refresh_all_items(self) -> bool:
-
-        for ident, item in self.items_by_id.items():
-            btn = self.buttons_by_id.get(ident)
-            if btn:
-                self._refresh_item_ui(ident, item, btn)
-        return True
-
     def on_watcher_item_added(self, _, identifier: str):
         item = self.watcher.get_item_for_identifier(identifier)
         if not item:
@@ -113,12 +101,12 @@ class SystemTray(Box):
         self.items_by_id[identifier] = item
 
         item.connect("notify::icon-pixmaps",
-                     lambda itm, pspec: self._refresh_item_ui(identifier, itm, btn))
+                     lambda itm, pspec: self._refresh_item_ui(itm, btn))
         item.connect("notify::icon-name",
-                     lambda itm, pspec: self._refresh_item_ui(identifier, itm, btn))
+                     lambda itm, pspec: self._refresh_item_ui(itm, btn))
 
         try:
-            item.connect("updated", lambda itm: self._refresh_item_ui(identifier, itm, btn))
+            item.connect("icon-changed", lambda itm: self._refresh_item_ui(itm, btn))
         except TypeError:
             pass
 
