@@ -129,7 +129,7 @@ class Notch(Window):
 
         super().__init__(
             name="notch",
-            layer="top",
+            layer="overlay",
             anchor=anchor_val,
             margin=current_margin_str,
             keyboard_mode="none",
@@ -425,9 +425,10 @@ class Notch(Window):
 
         self._current_window_class = self._get_current_window_class()
 
-        if data.PANEL_THEME == "Notch" and data.BAR_POSITION != "Top":
-            GLib.timeout_add(500, self._check_occlusion)
-        elif data.PANEL_THEME == "Notch":
+        # Always enable occlusion detection for fullscreen windows
+        GLib.timeout_add(500, self._check_occlusion)
+
+        if data.PANEL_THEME == "Notch":
             self.notch_revealer.set_reveal_child(True)
         else:
             self.notch_revealer.set_reveal_child(False)

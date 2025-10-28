@@ -109,6 +109,9 @@ def check_occlusion(occlusion_region, workspace=None):
     occ_x2 = occ_x + occ_width
     occ_y2 = occ_y + occ_height
 
+    # Get screen dimensions for fullscreen check
+    screen_width, screen_height = get_screen_dimensions()
+
     for client in clients:
         # Check if client is mapped
         if not client.get("mapped", False):
@@ -129,6 +132,12 @@ def check_occlusion(occlusion_region, workspace=None):
         width, height = size
         win_x1, win_y1 = x, y
         win_x2, win_y2 = x + width, y + height
+
+        # Check for fullscreen windows (size matches screen and positioned at 0,0)
+        if (width, height) == (screen_width, screen_height) and (x, y) == (0, 0):
+            # For fullscreen windows, check if occlusion region is the top area
+            if occ_y == 0 and occ_height > 0:  # Top region
+                return True  # Consider fullscreen as occluding the top
 
         # Check for intersection between the window and occlusion region
         if not (win_x2 <= occ_x or win_x1 >= occ_x2 or win_y2 <= occ_y or win_y1 >= occ_y2):

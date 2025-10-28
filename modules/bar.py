@@ -12,7 +12,7 @@ from fabric.widgets.centerbox import CenterBox
 from fabric.widgets.datetime import DateTime
 from fabric.widgets.label import Label
 from fabric.widgets.revealer import Revealer
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, GLib, Gtk
 
 import config.data as data
 import modules.icons as icons
@@ -615,6 +615,10 @@ class Bar(Window):
             self.bar_inner.add_style_class("hidden")
         else:
             self.bar_inner.remove_style_class("hidden")
+            # Ensure notch is above bar when bar is shown
+            if self.notch:
+                # Focus the notch window to bring it to front
+                GLib.idle_add(lambda: exec_shell_command_async("hyprctl dispatch focuswindow class:notch") if self.notch else None)
 
     def chinese_numbers(self):
         if data.BAR_WORKSPACE_USE_CHINESE_NUMERALS:
