@@ -24,7 +24,7 @@ from .data import (
     APP_NAME,
     APP_NAME_CAP,
 )
-from .settings_utils import backup_and_replace, bind_vars, start_config
+from .settings_utils import backup_and_replace, bind_vars, get_bind_var, start_config
 
 
 class HyprConfGUI(Window):
@@ -155,11 +155,11 @@ class HyprConfGUI(Window):
             row = i + 1
             binding_label = Label(label=label_text, h_align="start")
             keybind_grid.attach(binding_label, 0, row, 1, 1)
-            prefix_entry = Entry(text=bind_vars.get(prefix_key, ""))
+            prefix_entry = Entry(text=get_bind_var(prefix_key))
             keybind_grid.attach(prefix_entry, 1, row, 1, 1)
             plus_label = Label(label="+", h_align="center")
             keybind_grid.attach(plus_label, 2, row, 1, 1)
-            suffix_entry = Entry(text=bind_vars.get(suffix_key, ""))
+            suffix_entry = Entry(text=get_bind_var(suffix_key))
             keybind_grid.attach(suffix_entry, 3, row, 1, 1)
             self.entries.append((prefix_key, suffix_key, prefix_entry, suffix_entry))
 
@@ -199,7 +199,7 @@ class HyprConfGUI(Window):
         self.wall_dir_chooser.set_tooltip_text(
             "Select the directory containing your wallpaper images"
         )
-        self.wall_dir_chooser.set_filename(bind_vars.get("wallpapers_dir", ""))
+        self.wall_dir_chooser.set_filename(get_bind_var("wallpapers_dir"))
         self.wall_dir_chooser.set_size_request(180, -1)
         chooser_container.add(self.wall_dir_chooser)
         top_grid.attach(chooser_container, 1, 1, 1, 1)
@@ -267,7 +267,7 @@ class HyprConfGUI(Window):
             valign=Gtk.Align.CENTER,
         )
         self.datetime_12h_switch = Gtk.Switch(
-            active=bind_vars.get("datetime_12h_format", False)
+            active=get_bind_var("datetime_12h_format")
         )
         datetime_12h_switch_container.add(self.datetime_12h_switch)
         datetime_grid.attach(datetime_12h_switch_container, 1, 0, 1, 1)
@@ -294,7 +294,7 @@ class HyprConfGUI(Window):
         positions = ["Top", "Bottom", "Left", "Right"]
         for pos in positions:
             self.position_combo.append_text(pos)
-        current_position = bind_vars.get("bar_position", "Top")
+        current_position = get_bind_var("bar_position")
         try:
             self.position_combo.set_active(positions.index(current_position))
         except ValueError:
@@ -313,8 +313,8 @@ class HyprConfGUI(Window):
             valign=Gtk.Align.CENTER,
         )
         self.centered_switch = Gtk.Switch(
-            active=bind_vars.get("centered_bar", False),
-            sensitive=bind_vars.get("bar_position", "Top") in ["Left", "Right"],
+            active=get_bind_var("centered_bar"),
+            sensitive=get_bind_var("bar_position") in ["Left", "Right"],
         )
         centered_switch_container.add(self.centered_switch)
         layout_grid.attach(centered_switch_container, 3, 0, 1, 1)
@@ -326,7 +326,7 @@ class HyprConfGUI(Window):
             halign=Gtk.Align.START,
             valign=Gtk.Align.CENTER,
         )
-        self.dock_switch = Gtk.Switch(active=bind_vars.get("dock_enabled", True))
+        self.dock_switch = Gtk.Switch(active=get_bind_var("dock_enabled"))
         self.dock_switch.connect("notify::active", self.on_dock_enabled_changed)
         dock_switch_container.add(self.dock_switch)
         layout_grid.attach(dock_switch_container, 1, 1, 1, 1)
@@ -341,7 +341,7 @@ class HyprConfGUI(Window):
             valign=Gtk.Align.CENTER,
         )
         self.dock_hover_switch = Gtk.Switch(
-            active=bind_vars.get("dock_always_show", False),
+            active=get_bind_var("dock_always_show"),
             sensitive=self.dock_switch.get_active(),
         )
         dock_hover_switch_container.add(self.dock_hover_switch)
@@ -354,7 +354,7 @@ class HyprConfGUI(Window):
         self.dock_size_scale = Scale(
             min_value=16,
             max_value=48,
-            value=bind_vars.get("dock_icon_size", 28),
+            value=get_bind_var("dock_icon_size"),
             increments=(2, 4),
             draw_value=True,
             value_position="right",
@@ -373,7 +373,7 @@ class HyprConfGUI(Window):
             valign=Gtk.Align.CENTER,
         )
         self.ws_num_switch = Gtk.Switch(
-            active=bind_vars.get("bar_workspace_show_number", False)
+            active=get_bind_var("bar_workspace_show_number")
         )
         self.ws_num_switch.connect("notify::active", self.on_ws_num_changed)
         ws_num_switch_container.add(self.ws_num_switch)
@@ -389,7 +389,7 @@ class HyprConfGUI(Window):
             valign=Gtk.Align.CENTER,
         )
         self.ws_chinese_switch = Gtk.Switch(
-            active=bind_vars.get("bar_workspace_use_chinese_numerals", False),
+            active=get_bind_var("bar_workspace_use_chinese_numerals"),
             sensitive=self.ws_num_switch.get_active(),
         )
         ws_chinese_switch_container.add(self.ws_chinese_switch)
@@ -405,7 +405,7 @@ class HyprConfGUI(Window):
             valign=Gtk.Align.CENTER,
         )
         self.special_ws_switch = Gtk.Switch(
-            active=bind_vars.get("bar_hide_special_workspace", True)
+            active=get_bind_var("bar_hide_special_workspace")
         )
         special_ws_switch_container.add(self.special_ws_switch)
         layout_grid.attach(special_ws_switch_container, 1, 4, 1, 1)
@@ -422,7 +422,7 @@ class HyprConfGUI(Window):
         themes = ["Pills", "Dense", "Edge"]
         for theme in themes:
             self.bar_theme_combo.append_text(theme)
-        current_theme = bind_vars.get("bar_theme", "Pills")
+        current_theme = get_bind_var("bar_theme")
         try:
             self.bar_theme_combo.set_active(themes.index(current_theme))
         except ValueError:
@@ -441,7 +441,7 @@ class HyprConfGUI(Window):
         self.dock_theme_combo.set_tooltip_text("Select the visual theme for the dock")
         for theme in themes:
             self.dock_theme_combo.append_text(theme)
-        current_dock_theme = bind_vars.get("dock_theme", "Pills")
+        current_dock_theme = get_bind_var("dock_theme")
         try:
             self.dock_theme_combo.set_active(themes.index(current_dock_theme))
         except ValueError:
@@ -465,7 +465,7 @@ class HyprConfGUI(Window):
         panel_themes = ["Notch", "Panel"]
         for theme in panel_themes:
             self.panel_theme_combo.append_text(theme)
-        current_panel_theme = bind_vars.get("panel_theme", "Notch")
+        current_panel_theme = get_bind_var("panel_theme")
         try:
             self.panel_theme_combo.set_active(panel_themes.index(current_panel_theme))
         except ValueError:
@@ -495,9 +495,7 @@ class HyprConfGUI(Window):
         for option in self.panel_position_options:
             self.panel_position_combo.append_text(option)
 
-        current_panel_position = bind_vars.get(
-            "panel_position", "Center"
-        )
+        current_panel_position = get_bind_var("panel_position")
         try:
             self.panel_position_combo.set_active(
                 self.panel_position_options.index(current_panel_position)
@@ -533,7 +531,7 @@ class HyprConfGUI(Window):
         for pos in notification_positions_list:
             self.notification_pos_combo.append_text(pos)
 
-        current_notif_pos = bind_vars.get("notif_pos", "Top")
+        current_notif_pos = get_bind_var("notif_pos")
         try:
             self.notification_pos_combo.set_active(
                 notification_positions_list.index(current_notif_pos)
@@ -581,7 +579,7 @@ class HyprConfGUI(Window):
             "button_power": "Power Button",
         }
 
-        self.corners_switch = Gtk.Switch(active=bind_vars.get("corners_visible", True))
+        self.corners_switch = Gtk.Switch(active=get_bind_var("corners_visible"))
         num_components = len(component_display_names) + 1
         rows_per_column = (num_components + 1) // 2
 
@@ -617,7 +615,7 @@ class HyprConfGUI(Window):
                 valign=Gtk.Align.CENTER,
             )
             component_switch = Gtk.Switch(
-                active=bind_vars.get(f"bar_{name}_visible", True)
+                active=get_bind_var(f"bar_{name}_visible")
             )
             switch_container.add(component_switch)
             components_grid.attach(switch_container, col + 1, row, 1, 1)
@@ -674,7 +672,7 @@ class HyprConfGUI(Window):
             valign=Gtk.Align.CENTER,
         )
         self.auto_append_switch = Gtk.Switch(
-            active=bind_vars.get("auto_append_hyprland", True),
+            active=get_bind_var("auto_append_hyprland"),
             tooltip_text="Automatically append Rz-Shell source string to hyprland.conf"
         )
         auto_append_switch_container.add(self.auto_append_switch)
@@ -703,7 +701,7 @@ class HyprConfGUI(Window):
             available_monitors = [{'id': 0, 'name': 'default'}]
         
         # Get current selection from config
-        current_selection = bind_vars.get("selected_monitors", [])
+        current_selection = get_bind_var("selected_monitors")
         
         # Create checkboxes for each monitor
         for monitor in available_monitors:
@@ -734,7 +732,7 @@ class HyprConfGUI(Window):
         terminal_label = Label(label="Command:", h_align="start", v_align="center")
         system_grid.attach(terminal_label, 0, 4, 1, 1)
         self.terminal_entry = Entry(
-            text=bind_vars.get("terminal_command", "kitty -e"),
+            text=get_bind_var("terminal_command"),
             tooltip_text="Command used to launch terminal apps (e.g., 'kitty -e')",
             h_expand=True,
         )
@@ -809,7 +807,7 @@ class HyprConfGUI(Window):
         )
         notif_grid.attach(limited_apps_label, 0, 0, 1, 1)
 
-        limited_apps_list = bind_vars.get("limited_apps_history", ["Spotify"])
+        limited_apps_list = get_bind_var("limited_apps_history")
         limited_apps_text = ", ".join(f'"{app}"' for app in limited_apps_list)
         self.limited_apps_entry = Entry(
             text=limited_apps_text,
@@ -830,7 +828,7 @@ class HyprConfGUI(Window):
         )
         notif_grid.attach(ignored_apps_label, 0, 2, 1, 1)
 
-        ignored_apps_list = bind_vars.get("history_ignored_apps", ["Hyprshot"])
+        ignored_apps_list = get_bind_var("history_ignored_apps")
         ignored_apps_text = ", ".join(f'"{app}"' for app in ignored_apps_list)
         self.ignored_apps_entry = Entry(
             text=ignored_apps_text,
@@ -859,7 +857,7 @@ class HyprConfGUI(Window):
         metrics_grid.attach(Label(label="Show in Metrics", h_align="start"), 0, 0, 1, 1)
         for i, (key, label_text) in enumerate(metric_names.items()):
             switch = Gtk.Switch(
-                active=bind_vars.get("metrics_visible", {}).get(key, True)
+                active=get_bind_var("metrics_visible").get(key, True)
             )
             self.metrics_switches[key] = switch
             metrics_grid.attach(
@@ -872,7 +870,7 @@ class HyprConfGUI(Window):
         )
         for i, (key, label_text) in enumerate(metric_names.items()):
             switch = Gtk.Switch(
-                active=bind_vars.get("metrics_small_visible", {}).get(key, True)
+                active=get_bind_var("metrics_small_visible").get(key, True)
             )
             self.metrics_small_switches[key] = switch
             metrics_grid.attach(
@@ -906,7 +904,7 @@ class HyprConfGUI(Window):
             path
         )
 
-        for p in bind_vars.get("bar_metrics_disks", ["/"]):
+        for p in get_bind_var("bar_metrics_disks"):
             self._create_disk_edit_entry_func(p)
         vbox.add(self.disk_entries)
 
@@ -1319,39 +1317,39 @@ class HyprConfGUI(Window):
                 self.position_combo.set_active(0)
 
             self.centered_switch.set_active(
-                settings_utils.bind_vars.get("centered_bar", False)
+                settings_utils.get_bind_var("centered_bar")
             )
             self.centered_switch.set_sensitive(default_position in ["Left", "Right"])
 
             self.datetime_12h_switch.set_active(
-                settings_utils.bind_vars.get("datetime_12h_format", False)
+                settings_utils.get_bind_var("datetime_12h_format")
             )
 
             self.dock_switch.set_active(
-                settings_utils.bind_vars.get("dock_enabled", True)
+                settings_utils.get_bind_var("dock_enabled")
             )
             self.dock_hover_switch.set_active(
-                settings_utils.bind_vars.get("dock_always_show", False)
+                settings_utils.get_bind_var("dock_always_show")
             )
             self.dock_hover_switch.set_sensitive(self.dock_switch.get_active())
             self.dock_size_scale.set_value(
-                settings_utils.bind_vars.get("dock_icon_size", 28)
+                settings_utils.get_bind_var("dock_icon_size")
             )
             self.terminal_entry.set_text(settings_utils.bind_vars["terminal_command"])
             self.auto_append_switch.set_active(
-                settings_utils.bind_vars.get("auto_append_hyprland", True)
+                settings_utils.get_bind_var("auto_append_hyprland")
             )
             self.ws_num_switch.set_active(
-                settings_utils.bind_vars.get("bar_workspace_show_number", False)
+                settings_utils.get_bind_var("bar_workspace_show_number")
             )
             self.ws_chinese_switch.set_active(
-                settings_utils.bind_vars.get(
-                    "bar_workspace_use_chinese_numerals", False
+                settings_utils.get_bind_var(
+                    "bar_workspace_use_chinese_numerals"
                 )
             )
             self.ws_chinese_switch.set_sensitive(self.ws_num_switch.get_active())
             self.special_ws_switch.set_active(
-                settings_utils.bind_vars.get("bar_hide_special_workspace", True)
+                settings_utils.get_bind_var("bar_hide_special_workspace")
             )
 
             default_theme_val = DEFAULTS.get("bar_theme", "Pills")
@@ -1402,10 +1400,10 @@ class HyprConfGUI(Window):
 
             for name, switch in self.component_switches.items():
                 switch.set_active(
-                    settings_utils.bind_vars.get(f"bar_{name}_visible", True)
+                    settings_utils.get_bind_var(f"bar_{name}_visible")
                 )
             self.corners_switch.set_active(
-                settings_utils.bind_vars.get("corners_visible", True)
+                settings_utils.get_bind_var("corners_visible")
             )
 
             metrics_vis_defaults = DEFAULTS.get("metrics_visible", {})

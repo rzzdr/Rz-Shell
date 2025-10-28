@@ -12,13 +12,16 @@ gi.require_version("Gtk", "3.0")
 from fabric.utils.helpers import exec_shell_command_async
 from gi.repository import GLib
 
-# Importar settings_constants para DEFAULTS
 from . import settings_constants
-from .data import (  # CONFIG_DIR, HOME_DIR no se usan aquí directamente
+from .data import (
     APP_NAME, APP_NAME_CAP)
 
 # Global variable to store binding variables, managed by this module
-bind_vars = {}  # Se inicializa vacío, load_bind_vars lo poblará
+bind_vars = {} 
+
+def get_bind_var(setting_str: str):
+    default = settings_constants.DEFAULTS[setting_str] if setting_str in settings_constants.DEFAULTS else ""
+    return bind_vars.get(setting_str, default)
 
 
 def deep_update(target: dict, update: dict) -> dict:
@@ -208,7 +211,7 @@ def load_bind_vars():
                         default_sub_dict = settings_constants.DEFAULTS[vis_key]
                         # Si la clave no está en bind_vars o no es un diccionario después de deep_update,
                         # restaurarla desde una copia de DEFAULTS para esa clave.
-                        if not isinstance(bind_vars.get(vis_key), dict):
+                        if not isinstance(get_bind_var(vis_key), dict):
                             bind_vars[vis_key] = default_sub_dict.copy()
                         else:
                             # Si es un diccionario, asegurar que todas las sub-claves de DEFAULTS estén presentes.
@@ -237,7 +240,7 @@ def generate_hyprconf() -> str:
     """
     home = os.path.expanduser("~")
     # Determine animation type based on bar position
-    bar_position = bind_vars.get("bar_position", "Top")
+    bar_position = get_bind_var("bar_position")
     is_vertical = bar_position in ["Left", "Right"]
     animation_type = "slidefadevert" if is_vertical else "slidefade"
 
@@ -250,33 +253,34 @@ exec-once =  wl-paste --type image --watch cliphist store
 $fabricSend = fabric-cli exec {APP_NAME}
 $rzMessage = notify-send "Rzzdr" "Are you ok Baby?‼️🗣️🔥🕳️" -i "{home}/.face.icon" -A "🗣️" -A "🔥" -A "🕳️" -a "Source Code"
 
-bind = {bind_vars.get("prefix_restart", "SUPER ALT")}, {bind_vars.get("suffix_restart", "B")}, exec, killall {APP_NAME}; uwsm-app $(python {home}/.config/{APP_NAME_CAP}/main.py) # Reload {APP_NAME_CAP}
-bind = {bind_vars.get("prefix_rzmsg", "SUPER")}, {bind_vars.get("suffix_rzmsg", "A")}, exec, $rzMessage # Message
-bind = {bind_vars.get("prefix_dash", "SUPER")}, {bind_vars.get("suffix_dash", "D")}, exec, $fabricSend 'notch.open_notch("dashboard")' # Dashboard
-bind = {bind_vars.get("prefix_bluetooth", "SUPER")}, {bind_vars.get("suffix_bluetooth", "B")}, exec, $fabricSend 'notch.open_notch("bluetooth")' # Bluetooth
-bind = {bind_vars.get("prefix_pins", "SUPER")}, {bind_vars.get("suffix_pins", "Q")}, exec, $fabricSend 'notch.open_notch("pins")' # Pins
-bind = {bind_vars.get("prefix_kanban", "SUPER")}, {bind_vars.get("suffix_kanban", "N")}, exec, $fabricSend 'notch.open_notch("kanban")' # Kanban
-bind = $mainMod, SUPER_L, exec, $fabricSend 'notch.open_notch("launcher")' # App Launcher
-bind = {bind_vars.get("prefix_tmux", "SUPER")}, {bind_vars.get("suffix_tmux", "T")}, exec, $fabricSend 'notch.open_notch("tmux")' # Tmux
-bind = {bind_vars.get("prefix_cliphist", "SUPER")}, {bind_vars.get("suffix_cliphist", "V")}, exec, $fabricSend 'notch.open_notch("cliphist")' # Clipboard History
-bind = {bind_vars.get("prefix_toolbox", "SUPER")}, {bind_vars.get("suffix_toolbox", "S")}, exec, $fabricSend 'notch.open_notch("tools")' # Toolbox
-bind = {bind_vars.get("prefix_overview", "SUPER")}, {bind_vars.get("suffix_overview", "TAB")}, exec, $fabricSend 'notch.open_notch("overview")' # Overview
-bind = {bind_vars.get("prefix_wallpapers", "SUPER")}, {bind_vars.get("suffix_wallpapers", "COMMA")}, exec, $fabricSend 'notch.open_notch("wallpapers")' # Wallpapers
-bind = {bind_vars.get("prefix_randwall", "SUPER")}, {bind_vars.get("suffix_randwall", "COMMA")}, exec, $fabricSend 'notch.dashboard.wallpapers.set_random_wallpaper(None, external=True)' # Random Wallpaper
-bind = {bind_vars.get("prefix_mixer", "SUPER")}, {bind_vars.get("suffix_mixer", "M")}, exec, $fabricSend 'notch.open_notch("mixer")' # Audio Mixer
-bind = {bind_vars.get("prefix_emoji", "SUPER")}, {bind_vars.get("suffix_emoji", "PERIOD")}, exec, $fabricSend 'notch.open_notch("emoji")' # Emoji Picker
-bind = {bind_vars.get("prefix_power", "SUPER")}, {bind_vars.get("suffix_power", "ESCAPE")}, exec, $fabricSend 'notch.open_notch("power")' # Power Menu
-bind = {bind_vars.get("prefix_caffeine", "SUPER SHIFT")}, {bind_vars.get("suffix_caffeine", "M")}, exec, $fabricSend 'notch.dashboard.widgets.buttons.caffeine_button.toggle_inhibit(external=True)' # Toggle Caffeine
-bind = {bind_vars.get("prefix_toggle", "SUPER CTRL")}, {bind_vars.get("suffix_toggle", "B")}, exec, $fabricSend 'from utils.global_keybinds import get_global_keybind_handler; get_global_keybind_handler().toggle_bar()' # Toggle Bar
-bind = {bind_vars.get("prefix_css", "SUPER SHIFT")}, {bind_vars.get("suffix_css", "B")}, exec, $fabricSend 'app.set_css()' # Reload CSS
-bind = {bind_vars.get("prefix_restart_inspector", "SUPER CTRL ALT")}, {bind_vars.get("suffix_restart_inspector", "B")}, exec, killall {APP_NAME}; uwsm-app $(GTK_DEBUG=interactive python {home}/.config/{APP_NAME_CAP}/main.py) # Restart with inspector
+bind = {get_bind_var("prefix_restart")}, {get_bind_var("suffix_restart")}, exec, killall {APP_NAME}; uwsm-app $(python {home}/.config/{APP_NAME_CAP}/main.py) # Reload {APP_NAME_CAP}
+bind = {get_bind_var("prefix_axmsg")}, {get_bind_var("suffix_axmsg")}, exec, $axMessage # Message
+bind = {get_bind_var("prefix_dash")}, {get_bind_var("suffix_dash")}, exec, $fabricSend 'notch.open_notch("dashboard")' # Dashboard
+bind = {get_bind_var("prefix_bluetooth")}, {get_bind_var("suffix_bluetooth")}, exec, $fabricSend 'notch.open_notch("bluetooth")' # Bluetooth
+bind = {get_bind_var("prefix_pins")}, {get_bind_var("suffix_pins")}, exec, $fabricSend 'notch.open_notch("pins")' # Pins
+bind = {get_bind_var("prefix_kanban")}, {get_bind_var("suffix_kanban")}, exec, $fabricSend 'notch.open_notch("kanban")' # Kanban
+bind = {get_bind_var("prefix_launcher")}, {get_bind_var("suffix_launcher")}, exec, $fabricSend 'notch.open_notch("launcher")' # App Launcher
+bind = {get_bind_var("prefix_tmux")}, {get_bind_var("suffix_tmux")}, exec, $fabricSend 'notch.open_notch("tmux")' # Tmux
+bind = {get_bind_var("prefix_cliphist")}, {get_bind_var("suffix_cliphist")}, exec, $fabricSend 'notch.open_notch("cliphist")' # Clipboard History
+bind = {get_bind_var("prefix_toolbox")}, {get_bind_var("suffix_toolbox")}, exec, $fabricSend 'notch.open_notch("tools")' # Toolbox
+bind = {get_bind_var("prefix_overview")}, {get_bind_var("suffix_overview")}, exec, $fabricSend 'notch.open_notch("overview")' # Overview
+bind = {get_bind_var("prefix_wallpapers")}, {get_bind_var("suffix_wallpapers")}, exec, $fabricSend 'notch.open_notch("wallpapers")' # Wallpapers
+bind = {get_bind_var("prefix_randwall")}, {get_bind_var("suffix_randwall")}, exec, $fabricSend 'notch.dashboard.wallpapers.set_random_wallpaper(None, external=True)' # Random Wallpaper
+bind = {get_bind_var("prefix_mixer")}, {get_bind_var("suffix_mixer")}, exec, $fabricSend 'notch.open_notch("mixer")' # Audio Mixer
+bind = {get_bind_var("prefix_emoji")}, {get_bind_var("suffix_emoji")}, exec, $fabricSend 'notch.open_notch("emoji")' # Emoji Picker
+bind = {get_bind_var("prefix_power")}, {get_bind_var("suffix_power")}, exec, $fabricSend 'notch.open_notch("power")' # Power Menu
+bind = {get_bind_var("prefix_caffeine")}, {get_bind_var("suffix_caffeine")}, exec, $fabricSend 'notch.dashboard.widgets.buttons.caffeine_button.toggle_inhibit(external=True)' # Toggle Caffeine
+bind = {get_bind_var("prefix_toggle")}, {get_bind_var("suffix_toggle")}, exec, $fabricSend 'from utils.global_keybinds import get_global_keybind_handler; get_global_keybind_handler().toggle_bar()' # Toggle Bar
+bind = {get_bind_var("prefix_css")}, {get_bind_var("suffix_css")}, exec, $fabricSend 'app.set_css()' # Reload CSS
+bind = {get_bind_var("prefix_restart_inspector")}, {get_bind_var("suffix_restart_inspector")}, exec, killall {APP_NAME}; uwsm-app $(GTK_DEBUG=interactive python {home}/.config/{APP_NAME_CAP}/main.py) # Restart with inspector
+
 gesture = 3, down, dispatcher, exec, $fabricSend 'notch.open_notch("dashboard")'
 gesture = 3, horizontal, workspace
 gesture = 4, down, dispatcher, exec, fabric-cli exec rz-shell 'notch.open_notch("overview")'
 gesture = 3, up, dispatcher, exec, fabric-cli exec rz-shell 'notch.close_notch()'
 
 
-# Wallpapers directory: {bind_vars.get("wallpapers_dir", "~/.config/Rz-Shell/assets/wallpapers_example")}
+# Wallpapers directory: {get_bind_var("wallpapers_dir")}
 
 source = {home}/.config/{APP_NAME_CAP}/config/hypr/colors.conf
 

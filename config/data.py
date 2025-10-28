@@ -7,8 +7,8 @@ gi.require_version("Gtk", "3.0")
 from fabric.utils.helpers import get_relative_path
 from gi.repository import Gdk, GLib
 
-APP_NAME = "rz-shell"
 APP_NAME_CAP = "Rz-Shell"
+APP_NAME = APP_NAME_CAP.lower()
 
 CACHE_DIR = str(GLib.get_user_cache_dir()) + f"/{APP_NAME}"
 
