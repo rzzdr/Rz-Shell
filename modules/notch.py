@@ -145,6 +145,7 @@ class Notch(Window):
 
         self.bar = kwargs.get("bar", None)
         self.is_hovered = False
+        self.connect("realize", self._on_realize)
         self._prevent_occlusion = False
         self._occlusion_timer_id = None
         self._forced_occlusion = False
@@ -449,6 +450,10 @@ class Notch(Window):
         if window:
             window.set_cursor(None)
         return True
+    
+    def _on_realize(self, widget):
+        """Ensure the notch window is raised above the bar."""
+        self.get_window().raise_()
 
     def on_notch_hover_area_enter(self, widget, event):
         """Handle hover enter for the entire notch area"""
