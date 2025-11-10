@@ -1,7 +1,7 @@
 {
-	"version": "0.0.53", 
+	"version": "0.0.55", 
   "pkg_update": false,
 	"changelog": [
-    "<b>fix:</b> Brightness slider not working on scroll)"
+    "<b>fix:</b> Fixed dock not updating."
   ]
 }
