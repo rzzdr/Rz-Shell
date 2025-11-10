@@ -37,10 +37,10 @@ class Weather(Button):
 
     def _fetch_weather_thread(self, user_data):
 
-        url = "https://wttr.in/?format=%c+%t" if not data.VERTICAL else "https://wttr.in/?format=%c"
+        url = "https://wttr.in/Faridabad?format=%c+%t" if not data.VERTICAL else "https://wttr.in/Faridabad?format=%c"
 
-        tooltip_url = "https://wttr.in/?format=%l:+%C,+%t+(%f),+Humidity:+%h,+Wind:+%w"
-        
+        tooltip_url = "https://wttr.in/Faridabad?format=%l:+%C,+%t+(%f),+Humidity:+%h,+Wind:+%w"
+
         try:
             response = self.session.get(url, timeout=5)
             if response.ok:

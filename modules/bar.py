@@ -40,6 +40,7 @@ tooltip_apps = f"""<b><u>Launcher</u></b>
   :update - Open {data.APP_NAME_CAP}'s updater.
   :d - Open Dashboard.
   :w - Open Wallpapers."""
+  :settings - Open Settings.
 
 tooltip_power = """<b>Power Menu</b>"""
 tooltip_tools = """<b>Toolbox</b>"""
