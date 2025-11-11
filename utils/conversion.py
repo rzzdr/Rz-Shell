@@ -394,14 +394,23 @@ class Conversion():
 
     def parse_input_and_convert(self, input: str):
         parts = input.split()
-        addition = "s" if parts[-1].endswith("s") else ""
+        # Only add "s" if the last part doesn't already end with "s"
+        addition = "s" if not parts[-1].endswith("s") else ""
 
         if "and" in parts:  # valor unidad1 and valor2 unidad2 _ a unidad_destino
             parts.remove("and")
-            if len(parts) != 6:
-                raise ValueError("Formato inválido. Esperado: 'value from_type and value2 from_type2 _ to_type'")
+            # Handle both "to" and "_" separators
+            separator_idx = -1
+            for i, part in enumerate(parts):
+                if part in ["_", "to"]:
+                    separator_idx = i
+                    break
             
-            value1, from_type1, value2, from_type2, _, to_type = parts
+            if separator_idx == -1 or len(parts) != 6:
+                raise ValueError("Formato inválido. Esperado: 'value from_type and value2 from_type2 to/_ to_type'")
+            
+            value1, from_type1, value2, from_type2 = parts[:separator_idx-1] + parts[separator_idx-1:separator_idx+1]
+            to_type = parts[separator_idx+1]
             value1, value2 = float(value1), float(value2)
             from_type1 = self.clean_type(from_type1)
             from_type2 = self.clean_type(from_type2)
@@ -415,8 +424,19 @@ class Conversion():
                 res += self.convert(value2, from_type2, to_type)
                 return res, to_type + addition
         else:
-            if len(parts) != 4:
-                raise ValueError("Formato inválido. Esperado: 'value from_type _ to_type'")
+            # Handle both "to" and "_" separators
+            separator_idx = -1
+            for i, part in enumerate(parts):
+                if part in ["_", "to"]:
+                    separator_idx = i
+                    break
+            
+            if separator_idx == -1:
+                raise ValueError("Invalid Format. Expected: 'value from_type to/_ to_type'")
+            
+            if separator_idx != 2 or len(parts) != 4:
+                raise ValueError("Invalid Format. Expected: 'value from_type to/_ to_type'")
+            
             value, from_type, _, to_type = parts
             value = float(value)
             from_type = self.clean_type(from_type)

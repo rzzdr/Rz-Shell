@@ -579,15 +579,15 @@ class AppLauncher(Box):
         self.update_conversion_viewport()
 
         # Perform conversion in thread
-        def do_conversion():
+        def do_conversion(data):
             try:
                 result_value, result_type = self.converter.parse_input_and_convert(expr)
                 if result_type is None:
                     result_str = f"{result_value:.2f}"
                 else:
                     result_str = f"{result_value:.2f} {result_type}"
-            except:
-                result_str = "Error: Invalid conversion expression"
+            except Exception as e:
+                result_str = f"Error: {str(e)}"
 
             # Update the history entry
             GLib.idle_add(self._update_conversion_result, text, result_str)
