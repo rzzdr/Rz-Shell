@@ -131,3 +131,182 @@
   color: var(--outline);
   font-weight: bold;
 }
+
+/* New Mixer Subtabs Styles */
+#mixer-stack {
+  padding: 0;
+}
+
+#mixer-switcher {
+  margin-bottom: 8px;
+}
+
+#mixer-switcher.stack-switcher button {
+  border-radius: 16px;
+  padding: 8px 16px;
+  min-height: 16px;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background-color: var(--surface);
+  border: 2px solid var(--surface-bright);
+}
+
+#mixer-switcher.stack-switcher button:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+#mixer-switcher.stack-switcher button label {
+  font-weight: bold;
+  color: var(--foreground);
+}
+
+#mixer-switcher.stack-switcher button:checked label {
+  color: var(--shadow);
+}
+
+/* Tab content styles */
+#playback-tab,
+#output-devices-tab,
+#input-devices-tab {
+  padding: 4px;
+}
+
+#playback-scrolled,
+#output-devices-scrolled,
+#input-devices-scrolled,
+#outputs-scrolled,
+#inputs-scrolled {
+  border-radius: 16px;
+  border: 2px solid var(--surface-bright);
+  padding: 4px;
+}
+
+#playback-content,
+#output-devices-content,
+#input-devices-content {
+  padding: 8px;
+}
+
+#no-apps-label,
+#no-devices-label {
+  color: var(--outline);
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* Stream control styles */
+#stream-control {
+  background-color: alpha(var(--surface), 0.5);
+  border-radius: 12px;
+  padding: 8px;
+  margin: 4px 0;
+}
+
+/* Mute toggle button styles */
+#mute-toggle-button {
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 16px;
+  padding: 4px;
+  background-color: var(--surface-bright);
+  border: 2px solid var(--outline);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#mute-toggle-button:hover {
+  background-color: var(--outline);
+  border-radius: 8px;
+}
+
+#mute-toggle-button:active {
+  background-color: var(--surface-bright);
+}
+
+#mute-toggle-button.muted {
+  background-color: var(--error-dim);
+  border-color: var(--error-dim);
+}
+
+#mute-toggle-button.muted:hover {
+  background-color: var(--error);
+}
+
+#mute-toggle-icon {
+  font-size: 16px;
+  color: var(--foreground);
+}
+
+#mute-toggle-button.muted #mute-toggle-icon {
+  color: var(--shadow);
+}
+
+/* Device selector styles */
+#device-selector-button {
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 16px;
+  padding: 4px;
+  background-color: var(--surface);
+  border: 2px solid var(--outline);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#device-selector-button:hover {
+  background-color: var(--surface-bright);
+  border-radius: 8px;
+}
+
+#device-selector-button:active {
+  background-color: var(--surface);
+}
+
+#device-selector-button.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+#device-selector-button.active:hover {
+  background-color: var(--foreground);
+}
+
+#device-selector-icon {
+  font-size: 14px;
+  color: var(--foreground);
+}
+
+#device-selector-button.active #device-selector-icon {
+  color: var(--shadow);
+}
+
+/* Mixer switcher icons (for vertical mode) */
+#mixer-switcher-icon-playback,
+#mixer-switcher-icon-output-devices,
+#mixer-switcher-icon-input-devices {
+  font-size: 20px;
+}
+
+/* Mixer scrollbar styling */
+#playback-scrolled scrollbar,
+#output-devices-scrolled scrollbar,
+#input-devices-scrolled scrollbar {
+  background: transparent;
+}
+
+#playback-scrolled scrollbar.vertical slider,
+#output-devices-scrolled scrollbar.vertical slider,
+#input-devices-scrolled scrollbar.vertical slider {
+  background: var(--primary);
+  border-radius: 8px;
+  min-width: 16px;
+  min-height: 48px;
+  margin: 4px;
+}
+
+#playback-scrolled scrollbar.vertical trough,
+#output-devices-scrolled scrollbar.vertical trough,
+#input-devices-scrolled scrollbar.vertical trough {
+  background: var(--surface);
+  border: none;
+  border-radius: 12px;
+  margin: 4px;
+}
