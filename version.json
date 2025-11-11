@@ -1,7 +1,7 @@
 {
-	"version": "0.0.55", 
+	"version": "0.0.56", 
   "pkg_update": false,
 	"changelog": [
-    "<b>fix:</b> Fixed dock not updating."
+    "<b>fix:</b> Fixed errors in conversion utility."
   ]
 }
