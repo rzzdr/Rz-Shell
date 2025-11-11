@@ -135,7 +135,7 @@ class HyprConfGUI(Window):
             ("Message", "prefix_rzmsg", "suffix_rzmsg"),
             ("Dashboard", "prefix_dash", "suffix_dash"),
             ("Bluetooth", "prefix_bluetooth", "suffix_bluetooth"),
-            ("Pins", "prefix_pins", "suffix_pins"),
+            # ("Pins", "prefix_pins", "suffix_pins"),
             ("Kanban", "prefix_kanban", "suffix_kanban"),
             ("App Launcher", "prefix_launcher", "suffix_launcher"),
             ("Tmux", "prefix_tmux", "suffix_tmux"),
