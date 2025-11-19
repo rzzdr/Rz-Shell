@@ -43,7 +43,7 @@
 
 **Run the following command in your terminal once logged into Hyprland:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/rzzdr/Rz-Shell/main/install.sh | bash
+curl -fsSL https://get.rzzdr.com/rz-shell | bash
 ```
 
 ### Manual Installation
