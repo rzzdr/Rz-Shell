@@ -7,6 +7,7 @@ set -o pipefail  # Prevent errors in a pipeline from being masked
 REPO_URL="https://github.com/rzzdr/Rz-Shell.git"
 INSTALL_DIR="$HOME/.config/Rz-Shell"
 PACKAGES=(
+  awww-git
   brightnessctl
   cava
   cliphist
@@ -41,7 +42,6 @@ PACKAGES=(
   python-toml
   python-watchdog
   swappy
-  swww-git
   tesseract
   tesseract-data-eng
   tesseract-data-spa

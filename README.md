@@ -53,6 +53,7 @@ curl -fsSL https://get.rzzdr.com/rz-shell | bash
     - [Gray](https://github.com/Fabric-Development/gray)
     - [Matugen](https://github.com/InioX/matugen)
     - `brightnessctl`
+    - `awww`
     - `cava`
     - `cliphist`
     - `gnome-bluetooth-3.0`
@@ -73,7 +74,6 @@ curl -fsSL https://get.rzzdr.com/rz-shell | bash
     - `nvtop`
     - `playerctl`
     - `swappy`
-    - `swww`
     - `tesseract`
     - `tesseract-data-eng`
     - `tesseract-data-spa`

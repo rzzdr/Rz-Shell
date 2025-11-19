@@ -1,7 +1,7 @@
 {
-	"version": "0.0.56", 
-  "pkg_update": false,
+	"version": "0.0.57", 
+  "pkg_update": true,
 	"changelog": [
-    "<b>fix:</b> Fixed errors in conversion utility."
+    "<b>fix:</b> swww changed to awww."
   ]
 }
