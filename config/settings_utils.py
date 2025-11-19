@@ -248,7 +248,7 @@ def generate_hyprconf() -> str:
 
     return f"""exec-once = uwsm-app $(python {home}/.config/{APP_NAME_CAP}/main.py)
 exec = pgrep -x "hypridle" > /dev/null || uwsm app -- hypridle
-exec-once = uwsm app -- awww-daemon
+exec = uwsm app -- awww-daemon
 exec-once =  wl-paste --type text --watch cliphist store
 exec-once =  wl-paste --type image --watch cliphist store
 
