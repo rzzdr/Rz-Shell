@@ -55,6 +55,7 @@ curl -fsSL https://get.rzzdr.com/rz-shell | bash
     - `brightnessctl`
     - `awww`
     - `cava`
+    - `ddcutil`
     - `cliphist`
     - `gnome-bluetooth-3.0`
     - `gobject-introspection`

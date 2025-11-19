@@ -11,6 +11,7 @@ PACKAGES=(
   brightnessctl
   cava
   cliphist
+  ddcutil
   fabric-cli-git
   gnome-bluetooth-3.0
   gobject-introspection
