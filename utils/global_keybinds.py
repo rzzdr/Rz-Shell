@@ -187,45 +187,46 @@ class GlobalKeybindHandler:
         """
         if not self._monitor_manager:
             return False
+
+        monitors = self._monitor_manager.get_monitors()
+
+        for monitor in monitors:
+            bar = self._monitor_manager.get_instance(monitor['id'], 'bar')
+            notch = self._monitor_manager.get_instance(monitor['id'], 'notch')
         
-        focused_monitor_id = self._monitor_manager.get_focused_monitor_id()
+            if bar and notch:
+                try:
+                    current_visibility = bar.get_visible()
+                    bar.set_visible(not current_visibility)
+                    
+                    if not current_visibility:
+                        # Bar is being shown - restore from occlusion
+                        notch.restore_from_occlusion()
+                        # Also restore docks on all monitors
+                        try:
+                            from modules.dock import Dock
+                            for dock_instance in Dock._instances:
+                                if hasattr(dock_instance, 'restore_from_occlusion'):
+                                    dock_instance.restore_from_occlusion()
+                        except ImportError:
+                            pass
+                    else:
+                        # Bar is being hidden - force occlusion
+                        notch.force_occlusion()
+                        # Also force occlusion on docks on all monitors
+                        try:
+                            from modules.dock import Dock
+                            for dock_instance in Dock._instances:
+                                if hasattr(dock_instance, 'force_occlusion'):
+                                    dock_instance.force_occlusion()
+                        except ImportError:
+                            pass
+                    
+                except Exception as e:
+                    print(f"GlobalKeybindHandler: Error toggling bar: {e}")
+                    return False
         
-        bar = self._monitor_manager.get_focused_instance('bar')
-        notch = self._monitor_manager.get_focused_instance('notch')
-        
-        if bar and notch:
-            try:
-                current_visibility = bar.get_visible()
-                bar.set_visible(not current_visibility)
-                
-                if not current_visibility:
-                    # Bar is being shown - restore from occlusion
-                    notch.restore_from_occlusion()
-                    # Also restore docks on all monitors
-                    try:
-                        from modules.dock import Dock
-                        for dock_instance in Dock._instances:
-                            if hasattr(dock_instance, 'restore_from_occlusion'):
-                                dock_instance.restore_from_occlusion()
-                    except ImportError:
-                        pass
-                else:
-                    # Bar is being hidden - force occlusion
-                    notch.force_occlusion()
-                    # Also force occlusion on docks on all monitors
-                    try:
-                        from modules.dock import Dock
-                        for dock_instance in Dock._instances:
-                            if hasattr(dock_instance, 'force_occlusion'):
-                                dock_instance.force_occlusion()
-                    except ImportError:
-                        pass
-                
-                return True
-            except Exception as e:
-                print(f"GlobalKeybindHandler: Error toggling bar: {e}")
-        
-        return False
+        return True
 
 
 # Singleton accessor
