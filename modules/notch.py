@@ -873,7 +873,7 @@ class Notch(Window):
 
     def _check_occlusion(self):
         """
-        Check if top 40px of the screen is occluded by any window
+        Check if top 40px of the screen is occluded by any window on this monitor
         and update the notch_revealer accordingly.
         """
 
@@ -884,7 +884,8 @@ class Notch(Window):
             # When forced occlusion is active, show only on hover
             self.notch_revealer.set_reveal_child(self.is_hovered)
         elif not (self.is_hovered or self._is_notch_open or self._prevent_occlusion):
-            is_occluded = check_occlusion((occlusion_edge, occlusion_size))
+            # Pass monitor_id to check occlusion only on this monitor
+            is_occluded = check_occlusion((occlusion_edge, occlusion_size), monitor_id=self.monitor_id)
             self.notch_revealer.set_reveal_child(not is_occluded)
 
         return True
