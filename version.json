@@ -2,6 +2,7 @@
 	"version": "0.0.57", 
   "pkg_update": true,
 	"changelog": [
-    "<b>fix:</b> swww changed to awww."
+    "<b>fix:</b> swww changed to awww.",
+    "<b>fix:</b> Bar hiding only on one monitor. (<a href='https://github.com/rzzdr/rz-Shell/commit/b50bd52e03f2b3f73a4c7b8e6286d277a7d1271d'>#b50bd52</a>)"
   ]
 }
