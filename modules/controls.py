@@ -109,7 +109,7 @@ class BrightnessSlider(Scale):
             orientation="h",
             h_expand=True,
             has_origin=True,
-            increments=(5, 10),
+            increments=(1, 5),
             **kwargs,
         )
         self.client = Brightness.get_initial()
@@ -117,7 +117,9 @@ class BrightnessSlider(Scale):
             self.destroy()
             return
 
-        self.set_range(0, self.client.max_screen)
+        # Use percentage range (0-100) instead of raw values
+        self.set_range(0, 100)
+        # The service already returns percentage values (0-100)
         self.set_value(self.client.screen_brightness)
         self.add_style_class("brightness")
 
@@ -140,10 +142,13 @@ class BrightnessSlider(Scale):
 
     def _update_brightness_callback(self):
         if self._pending_value is not None:
-            value_to_set = self._pending_value
+            percentage_value = int(self._pending_value)
             self._pending_value = None
-            if value_to_set != self.client.screen_brightness:
-                self.client.screen_brightness = value_to_set
+            # Compare with current percentage value from service
+            current_percentage = self.client.screen_brightness
+            if percentage_value != current_percentage:
+                # Set brightness using percentage value directly
+                self.client.screen_brightness = percentage_value
             self._update_source_id = None
             return False
         else:
@@ -152,9 +157,10 @@ class BrightnessSlider(Scale):
 
     def on_brightness_changed(self, client, _):
         self._updating_from_brightness = True
-        self.set_value(self.client.screen_brightness)
+        # The service already returns percentage values (0-100)
+        percentage = self.client.screen_brightness
+        self.set_value(percentage)
         self._updating_from_brightness = False
-        percentage = int((self.client.screen_brightness / self.client.max_screen) * 100)
         self.set_tooltip_text(f"{percentage}%")
 
     def destroy(self):
