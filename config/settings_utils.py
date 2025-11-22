@@ -271,7 +271,7 @@ bind = {get_bind_var("prefix_randwall")}, {get_bind_var("suffix_randwall")}, exe
 bind = {get_bind_var("prefix_mixer")}, {get_bind_var("suffix_mixer")}, exec, $fabricSend 'notch.open_notch("mixer")' # Audio Mixer
 bind = {get_bind_var("prefix_emoji")}, {get_bind_var("suffix_emoji")}, exec, $fabricSend 'notch.open_notch("emoji")' # Emoji Picker
 bind = {get_bind_var("prefix_power")}, {get_bind_var("suffix_power")}, exec, $fabricSend 'notch.open_notch("power")' # Power Menu
-bind = {get_bind_var("prefix_caffeine")}, {get_bind_var("suffix_caffeine")}, exec, $fabricSend 'notch.dashboard.widgets.buttons.caffeine_button.toggle_inhibit(external=True)' # Toggle Caffeine
+bind = {get_bind_var("prefix_caffeine")}, {get_bind_var("suffix_caffeine")}, exec, $fabricSend 'from utils.global_keybinds import get_global_keybind_handler; get_global_keybind_handler().toggle_caffeine()' # Toggle Caffeine
 bind = {get_bind_var("prefix_toggle")}, {get_bind_var("suffix_toggle")}, exec, $fabricSend 'from utils.global_keybinds import get_global_keybind_handler; get_global_keybind_handler().toggle_bar()' # Toggle Bar
 bind = {get_bind_var("prefix_css")}, {get_bind_var("suffix_css")}, exec, $fabricSend 'app.set_css()' # Reload CSS
 bind = {get_bind_var("prefix_restart_inspector")}, {get_bind_var("suffix_restart_inspector")}, exec, killall {APP_NAME}; uwsm-app $(GTK_DEBUG=interactive python {home}/.config/{APP_NAME_CAP}/main.py) # Restart with inspector

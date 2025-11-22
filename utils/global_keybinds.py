@@ -142,6 +142,16 @@ class GlobalKeybindHandler:
         """Open power menu on focused monitor."""
         return self.open_notch_module('power')
     
+    def toggle_caffeine(self) -> bool:
+        """Toggle caffeine across all monitors."""
+        try:
+            from modules.buttons import CaffeineButton
+            CaffeineButton.toggle_all_instances(external=True)
+            return True
+        except Exception as e:
+            print(f"GlobalKeybindHandler: Error toggling caffeine: {e}")
+            return False
+    
     def open_toolbox(self) -> bool:
         """Open toolbox on focused monitor."""
         return self.open_notch_module('tools')

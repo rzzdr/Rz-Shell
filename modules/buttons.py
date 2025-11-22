@@ -350,6 +350,8 @@ class NightModeButton(Button):
             GLib.idle_add(self._add_disabled_style)
 
 class CaffeineButton(Button):
+    _instances = []  # Class-level list to track all instances
+    
     def __init__(self):
         self.caffeine_icon = Label(
             name="caffeine-icon",
@@ -389,6 +391,10 @@ class CaffeineButton(Button):
         add_hover_cursor(self)
 
         self.widgets = [self, self.caffeine_label, self.caffeine_status, self.caffeine_icon]
+        
+        # Register this instance
+        CaffeineButton._instances.append(self)
+        
         self.check_inhibit()
 
     def toggle_inhibit(self, *args, external=False):
@@ -406,19 +412,34 @@ class CaffeineButton(Button):
             subprocess.check_output(["pgrep", "rz-inhibit"])
             # Process was running, so we're killing it -> new status is "Disabled"
             exec_shell_command_async("pkill rz-inhibit")
-            GLib.idle_add(self.caffeine_status.set_label, "Disabled")
-            GLib.idle_add(self._add_disabled_style)
             new_status = "Disabled"
         except subprocess.CalledProcessError:
             # Process was not running, so we're starting it -> new status is "Enabled"
             exec_shell_command_async(f"python {data.HOME_DIR}/.config/{data.APP_NAME_CAP}/scripts/inhibit.py")
-            GLib.idle_add(self.caffeine_status.set_label, "Enabled")
-            GLib.idle_add(self._remove_disabled_style)
             new_status = "Enabled"
 
+        # Update status for all instances if this is an external call, otherwise just this instance
         if external and new_status:
+            # Update all instances
+            for instance in CaffeineButton._instances[:]:
+                try:
+                    GLib.idle_add(instance.caffeine_status.set_label, new_status)
+                    if new_status == "Disabled":
+                        GLib.idle_add(instance._add_disabled_style)
+                    else:
+                        GLib.idle_add(instance._remove_disabled_style)
+                except Exception as e:
+                    print(f"Error updating caffeine button instance: {e}")
+                    
             message = "Disabled 💤" if new_status == "Disabled" else "Enabled ☀️"
             exec_shell_command_async(f"notify-send '☕ Caffeine' '{message}' -a '{data.APP_NAME_CAP}' -e")
+        elif new_status:
+            # Update only this instance (normal button click)
+            GLib.idle_add(self.caffeine_status.set_label, new_status)
+            if new_status == "Disabled":
+                GLib.idle_add(self._add_disabled_style)
+            else:
+                GLib.idle_add(self._remove_disabled_style)
     
     def _add_disabled_style(self):
         """Helper to add disabled style to all widgets."""
@@ -442,6 +463,29 @@ class CaffeineButton(Button):
         except subprocess.CalledProcessError:
             GLib.idle_add(self.caffeine_status.set_label, "Disabled")
             GLib.idle_add(self._add_disabled_style)
+    
+    def destroy(self):
+        """Clean up instance reference when destroyed."""
+        if self in CaffeineButton._instances:
+            CaffeineButton._instances.remove(self)
+        super().destroy()
+    
+    @classmethod
+    def update_all_instances(cls):
+        """Update status for all caffeine button instances across monitors."""
+        for instance in cls._instances[:]:
+            try:
+                instance.check_inhibit()
+            except Exception as e:
+                print(f"Error updating caffeine button instance: {e}")
+    
+    @classmethod
+    def toggle_all_instances(cls, external=False):
+        """Toggle caffeine for all instances, but only the first one does the actual work."""
+        if cls._instances:
+            # Only the first instance does the actual toggle, but it will update all instances
+            first_instance = cls._instances[0]
+            first_instance.toggle_inhibit(external=external)
 
 class Buttons(Gtk.Grid):
     def __init__(self, **kwargs):
