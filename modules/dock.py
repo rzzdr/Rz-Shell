@@ -2,6 +2,7 @@ import json
 import logging
 
 import cairo
+import re
 from fabric.hyprland.widgets import get_hyprland_connection
 from fabric.utils import (exec_shell_command, exec_shell_command_async,
                           get_relative_path, idle_add, remove_handler)
@@ -319,6 +320,12 @@ class Dock(Window):
             if normalized.endswith(suffix):
                 normalized = normalized[:-len(suffix)]
         return normalized
+    
+    def _tokens(self, s: str):
+        """Return a set of tokens from class/executable-like strings split on non-alphanumerics."""
+        if not s: return set()
+        return set(filter(None, re.split(r'[^a-z0-9]+', s.lower())))
+
         
     def _classes_match(self, class1, class2):
         if not class1 or not class2: return False
@@ -562,16 +569,52 @@ class Dock(Window):
                 if app.name: possible_identifiers.append(app.name.lower())
                 if app.display_name: possible_identifiers.append(app.display_name.lower())
             
-            possible_identifiers = list(set(possible_identifiers)) 
+            possible_identifiers = list(set(possible_identifiers))
+
+            explicit_class = None
+            if isinstance(app_data_item, dict) and app_data_item.get("window_class"):
+                explicit_class = app_data_item["window_class"].lower().strip() 
             
             for identifier in possible_identifiers:
+                if explicit_class:
+                    # Only try exact matches (and normalized) against the explicit class.
+                    if identifier == explicit_class and identifier in running_windows:
+                        instances = running_windows[identifier]; matched_class = identifier; break
+                    normalized = self._normalize_window_class(explicit_class)
+                    if normalized in running_windows:
+                        instances = running_windows[normalized]; matched_class = normalized; break
+                    # also try tokens: e.g. class tokenization
+                    explicit_tokens = self._tokens(explicit_class)
+                    for window_class_key in running_windows:
+                        if explicit_tokens & self._tokens(window_class_key):
+                            instances = running_windows[window_class_key]; matched_class = window_class_key
+                            break
+                    if matched_class: break
+                    # if not found, continue to next possible_identifier (but do not fallback to exe/pid)
+                    continue
+
+                # Non-explicit case: try to match by exact key, normalized key, token match, or title-derived names
                 if identifier in running_windows:
                     instances = running_windows[identifier]; matched_class = identifier; break
+
                 normalized = self._normalize_window_class(identifier)
                 if normalized in running_windows:
                     instances = running_windows[normalized]; matched_class = normalized; break
-                for window_class_key in running_windows: 
-                    if len(identifier) >= 3 and identifier in window_class_key:
+
+                # Token-based matching (safer than raw substring)
+                id_tokens = self._tokens(identifier)
+                if id_tokens:
+                    for window_class_key in running_windows:
+                        window_tokens = self._tokens(window_class_key)
+                        # require a token intersection (whole-word style)
+                        if id_tokens & window_tokens:
+                            instances = running_windows[window_class_key]; matched_class = window_class_key
+                            break
+                    if matched_class: break
+
+                # As last-ditch: match title-derived fallback if identifier looks like an app title substring
+                for window_class_key in running_windows:
+                    if len(identifier) > 4 and identifier in window_class_key:
                         instances = running_windows[window_class_key]; matched_class = window_class_key
                         break
                 if matched_class: break
