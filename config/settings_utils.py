@@ -277,9 +277,8 @@ bind = {get_bind_var("prefix_css")}, {get_bind_var("suffix_css")}, exec, $fabric
 bind = {get_bind_var("prefix_restart_inspector")}, {get_bind_var("suffix_restart_inspector")}, exec, killall {APP_NAME}; uwsm-app $(GTK_DEBUG=interactive python {home}/.config/{APP_NAME_CAP}/main.py) # Restart with inspector
 
 gesture = 3, down, dispatcher, exec, $fabricSend 'notch.open_notch("dashboard")'
-gesture = 3, horizontal, workspace
-gesture = 4, down, dispatcher, exec, fabric-cli exec rz-shell 'notch.open_notch("overview")'
-gesture = 3, up, dispatcher, exec, fabric-cli exec rz-shell 'notch.close_notch()'
+gesture = 4, down, dispatcher, exec, $fabricSend 'notch.open_notch("overview")'
+gesture = 3, up, dispatcher, exec, $fabricSend 'notch.close_notch()'
 
 
 # Wallpapers directory: {get_bind_var("wallpapers_dir")}
