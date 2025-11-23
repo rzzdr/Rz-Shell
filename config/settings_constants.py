@@ -100,4 +100,17 @@ DEFAULTS = {
     "limited_apps_history": ["Spotify"],
     "history_ignored_apps": ["Hyprshot"],
     "selected_monitors": [],
+    "power_controls": {
+        "enable_low_battery_notifications": True,
+        "notification_levels": [20, 10, 5],
+        "notification_timeout": 8000,
+        "enable_auto_dim": True,
+        "dim_trigger_level": 20,
+        "dim_brightness_level": 30,
+        "enable_auto_suspend": False,
+        "suspend_trigger_level": 5,
+        "suspend_delay_minutes": 5,
+        "enable_performance_mode": True,
+        "performance_mode_battery_level": 50,
+    },
 }

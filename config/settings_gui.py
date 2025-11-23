@@ -64,6 +64,7 @@ class HyprConfGUI(Window):
         self.key_bindings_tab_content = self.create_key_bindings_tab()
         self.appearance_tab_content = self.create_appearance_tab()
         self.system_tab_content = self.create_system_tab()
+        self.power_controls_tab_content = self.create_power_controls_tab()
         self.about_tab_content = self.create_about_tab()
 
         self.tab_stack.add_titled(
@@ -73,6 +74,9 @@ class HyprConfGUI(Window):
             self.appearance_tab_content, "appearance", "Appearance"
         )
         self.tab_stack.add_titled(self.system_tab_content, "system", "System")
+        self.tab_stack.add_titled(
+            self.power_controls_tab_content, "power_controls", "Power Controls"
+        )
         self.tab_stack.add_titled(self.about_tab_content, "about", "About")
 
         tab_switcher = Gtk.StackSwitcher()
@@ -945,6 +949,236 @@ class HyprConfGUI(Window):
         self.disk_entries.add(bar)
         self.disk_entries.show_all()
 
+    def create_power_controls_tab(self):
+        scrolled_window = ScrolledWindow(
+            h_scrollbar_policy="never",
+            v_scrollbar_policy="automatic",
+            h_expand=True,
+            v_expand=True,
+            propagate_width=False,
+            propagate_height=False,
+        )
+
+        vbox = Box(orientation="v", spacing=15, style="margin: 15px;")
+        scrolled_window.add(vbox)
+
+        power_grid = Gtk.Grid()
+        power_grid.set_column_spacing(20)
+        power_grid.set_row_spacing(15)
+        power_grid.set_margin_bottom(15)
+        vbox.add(power_grid)
+
+        current_row = 0
+
+        # Low Battery Notifications Section
+        notifications_header = Label(markup="<b>Low Battery Notifications</b>", h_align="start")
+        power_grid.attach(notifications_header, 0, current_row, 4, 1)
+        current_row += 1
+
+        # Enable notifications switch
+        notif_enable_label = Label(
+            label="Enable low battery notifications", h_align="start", v_align="center"
+        )
+        power_grid.attach(notif_enable_label, 0, current_row, 1, 1)
+        notif_enable_container = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+        )
+        self.power_notifications_switch = Gtk.Switch(
+            active=get_bind_var("power_controls").get("enable_low_battery_notifications", True),
+            tooltip_text="Enable desktop notifications when battery level is low"
+        )
+        notif_enable_container.add(self.power_notifications_switch)
+        power_grid.attach(notif_enable_container, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Notification levels
+        levels_label = Label(
+            label="Notification levels (%):", h_align="start", v_align="center"
+        )
+        power_grid.attach(levels_label, 0, current_row, 1, 1)
+        current_levels = get_bind_var("power_controls").get("notification_levels", [20, 10, 5])
+        levels_text = ", ".join(map(str, current_levels))
+        self.notification_levels_entry = Entry(
+            text=levels_text,
+            tooltip_text="Comma-separated battery levels for notifications (e.g., 20, 10, 5)",
+            h_expand=True,
+        )
+        power_grid.attach(self.notification_levels_entry, 1, current_row, 2, 1)
+        current_row += 1
+
+        # Notification timeout
+        timeout_label = Label(
+            label="Notification timeout (ms):", h_align="start", v_align="center"
+        )
+        power_grid.attach(timeout_label, 0, current_row, 1, 1)
+        timeout_adj = Gtk.Adjustment(
+            value=get_bind_var("power_controls").get("notification_timeout", 8000),
+            lower=1000,
+            upper=30000,
+            step_increment=1000,
+            page_increment=5000,
+        )
+        self.notification_timeout_spin = Gtk.SpinButton(adjustment=timeout_adj)
+        power_grid.attach(self.notification_timeout_spin, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Automatic Brightness Control Section
+        brightness_header = Label(markup="<b>Automatic Brightness Control</b>", h_align="start")
+        power_grid.attach(brightness_header, 0, current_row, 4, 1)
+        current_row += 1
+
+        # Enable auto dim switch
+        dim_enable_label = Label(
+            label="Auto-dim screen on low battery", h_align="start", v_align="center"
+        )
+        power_grid.attach(dim_enable_label, 0, current_row, 1, 1)
+        dim_enable_container = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+        )
+        self.auto_dim_switch = Gtk.Switch(
+            active=get_bind_var("power_controls").get("enable_auto_dim", True),
+            tooltip_text="Automatically reduce screen brightness when battery is low"
+        )
+        dim_enable_container.add(self.auto_dim_switch)
+        power_grid.attach(dim_enable_container, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Dim trigger level
+        dim_trigger_label = Label(
+            label="Trigger level (%):", h_align="start", v_align="center"
+        )
+        power_grid.attach(dim_trigger_label, 0, current_row, 1, 1)
+        dim_trigger_adj = Gtk.Adjustment(
+            value=get_bind_var("power_controls").get("dim_trigger_level", 20),
+            lower=5,
+            upper=50,
+            step_increment=1,
+            page_increment=5,
+        )
+        self.dim_trigger_spin = Gtk.SpinButton(adjustment=dim_trigger_adj)
+        power_grid.attach(self.dim_trigger_spin, 1, current_row, 1, 1)
+
+        # Dim brightness level
+        dim_level_label = Label(
+            label="Dimmed brightness (%):", h_align="start", v_align="center"
+        )
+        power_grid.attach(dim_level_label, 2, current_row, 1, 1)
+        dim_level_adj = Gtk.Adjustment(
+            value=get_bind_var("power_controls").get("dim_brightness_level", 30),
+            lower=10,
+            upper=80,
+            step_increment=1,
+            page_increment=10,
+        )
+        self.dim_brightness_spin = Gtk.SpinButton(adjustment=dim_level_adj)
+        power_grid.attach(self.dim_brightness_spin, 3, current_row, 1, 1)
+        current_row += 1
+
+        # Auto Suspend Section
+        suspend_header = Label(markup="<b>Auto Suspend (Experimental)</b>", h_align="start")
+        power_grid.attach(suspend_header, 0, current_row, 4, 1)
+        current_row += 1
+
+        # Enable auto suspend switch
+        suspend_enable_label = Label(
+            label="Auto-suspend on critical battery", h_align="start", v_align="center"
+        )
+        power_grid.attach(suspend_enable_label, 0, current_row, 1, 1)
+        suspend_enable_container = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+        )
+        self.auto_suspend_switch = Gtk.Switch(
+            active=get_bind_var("power_controls").get("enable_auto_suspend", False),
+            tooltip_text="Automatically suspend system when battery is critically low"
+        )
+        suspend_enable_container.add(self.auto_suspend_switch)
+        power_grid.attach(suspend_enable_container, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Suspend trigger level and delay
+        suspend_trigger_label = Label(
+            label="Suspend at (%):", h_align="start", v_align="center"
+        )
+        power_grid.attach(suspend_trigger_label, 0, current_row, 1, 1)
+        suspend_trigger_adj = Gtk.Adjustment(
+            value=get_bind_var("power_controls").get("suspend_trigger_level", 5),
+            lower=3,
+            upper=15,
+            step_increment=1,
+            page_increment=2,
+        )
+        self.suspend_trigger_spin = Gtk.SpinButton(adjustment=suspend_trigger_adj)
+        power_grid.attach(self.suspend_trigger_spin, 1, current_row, 1, 1)
+
+        suspend_delay_label = Label(
+            label="Delay (minutes):", h_align="start", v_align="center"
+        )
+        power_grid.attach(suspend_delay_label, 2, current_row, 1, 1)
+        suspend_delay_adj = Gtk.Adjustment(
+            value=get_bind_var("power_controls").get("suspend_delay_minutes", 5),
+            lower=1,
+            upper=30,
+            step_increment=1,
+            page_increment=5,
+        )
+        self.suspend_delay_spin = Gtk.SpinButton(adjustment=suspend_delay_adj)
+        power_grid.attach(self.suspend_delay_spin, 3, current_row, 1, 1)
+        current_row += 1
+
+        # Performance Mode Section
+        performance_header = Label(markup="<b>Performance Mode</b>", h_align="start")
+        power_grid.attach(performance_header, 0, current_row, 4, 1)
+        current_row += 1
+
+        # Enable performance mode switch
+        perf_enable_label = Label(
+            label="Enable performance adjustments", h_align="start", v_align="center"
+        )
+        power_grid.attach(perf_enable_label, 0, current_row, 1, 1)
+        perf_enable_container = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+        )
+        self.performance_mode_switch = Gtk.Switch(
+            active=get_bind_var("power_controls").get("enable_performance_mode", True),
+            tooltip_text="Adjust system performance based on battery level"
+        )
+        perf_enable_container.add(self.performance_mode_switch)
+        power_grid.attach(perf_enable_container, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Performance mode battery level
+        perf_level_label = Label(
+            label="Switch to power-save below (%):", h_align="start", v_align="center"
+        )
+        power_grid.attach(perf_level_label, 0, current_row, 1, 1)
+        perf_level_adj = Gtk.Adjustment(
+            value=get_bind_var("power_controls").get("performance_mode_battery_level", 50),
+            lower=20,
+            upper=80,
+            step_increment=5,
+            page_increment=10,
+        )
+        self.performance_level_spin = Gtk.SpinButton(adjustment=perf_level_adj)
+        power_grid.attach(self.performance_level_spin, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Add informational notes
+        info_label = Label(
+            markup="<small><i>Note: Power controls will only activate when running on battery power.\nBrightness control requires ddcutil or brightnessctl to be installed.</i></small>",
+            h_align="start",
+        )
+        power_grid.attach(info_label, 0, current_row, 4, 1)
+
+        return scrolled_window
+
     def create_about_tab(self):
         vbox = Box(orientation="v", spacing=18, style="margin: 30px;")
         vbox.add(
@@ -1136,6 +1370,32 @@ class HyprConfGUI(Window):
         current_bind_vars_snapshot["selected_monitors"] = (
             selected_monitors if any_checked else []
         )
+
+        # Save power controls settings
+        power_controls = {}
+        power_controls["enable_low_battery_notifications"] = (
+            self.power_notifications_switch.get_active()
+        )
+        
+        # Parse notification levels
+        levels_text = self.notification_levels_entry.get_text().strip()
+        try:
+            levels = [int(x.strip()) for x in levels_text.split(",") if x.strip()]
+            power_controls["notification_levels"] = sorted(levels, reverse=True)
+        except ValueError:
+            power_controls["notification_levels"] = [20, 10, 5]  # Default
+        
+        power_controls["notification_timeout"] = int(self.notification_timeout_spin.get_value())
+        power_controls["enable_auto_dim"] = self.auto_dim_switch.get_active()
+        power_controls["dim_trigger_level"] = int(self.dim_trigger_spin.get_value())
+        power_controls["dim_brightness_level"] = int(self.dim_brightness_spin.get_value())
+        power_controls["enable_auto_suspend"] = self.auto_suspend_switch.get_active()
+        power_controls["suspend_trigger_level"] = int(self.suspend_trigger_spin.get_value())
+        power_controls["suspend_delay_minutes"] = int(self.suspend_delay_spin.get_value())
+        power_controls["enable_performance_mode"] = self.performance_mode_switch.get_active()
+        power_controls["performance_mode_battery_level"] = int(self.performance_level_spin.get_value())
+        
+        current_bind_vars_snapshot["power_controls"] = power_controls
 
         selected_icon_path = self.selected_face_icon
         replace_lock = self.lock_switch and self.lock_switch.get_active()

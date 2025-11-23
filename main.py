@@ -61,6 +61,15 @@ if __name__ == "__main__":
         monitor_manager = None
         multi_monitor_enabled = False
     
+    # Initialize power manager service
+    try:
+        from services.power_manager import PowerManagerService
+        power_manager = PowerManagerService.get_initial()
+        print("Rz-Shell: Power manager service initialized")
+    except Exception as e:
+        print(f"Rz-Shell: Failed to initialize power manager service: {e}")
+        power_manager = None
+    
     # Filter monitors based on selected_monitors configuration
     selected_monitors_config = config.get("selected_monitors", [])
     
