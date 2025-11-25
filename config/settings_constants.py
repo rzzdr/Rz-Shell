@@ -113,4 +113,13 @@ DEFAULTS = {
         "enable_performance_mode": True,
         "performance_mode_battery_level": 50,
     },
+    "pomodoro_settings": {
+        "work_minutes": 25,
+        "break_minutes": 5,
+        "long_break_minutes": 15,
+        "pomodoros_per_long_break": 4,
+        "auto_start_breaks": True,
+        "auto_start_pomodoros": True,
+        "ticking_sound": False,
+    },
 }

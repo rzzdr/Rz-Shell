@@ -65,6 +65,7 @@ class HyprConfGUI(Window):
         self.appearance_tab_content = self.create_appearance_tab()
         self.system_tab_content = self.create_system_tab()
         self.power_controls_tab_content = self.create_power_controls_tab()
+        self.pomodoro_tab_content = self.create_pomodoro_tab()
         self.about_tab_content = self.create_about_tab()
 
         self.tab_stack.add_titled(
@@ -76,6 +77,9 @@ class HyprConfGUI(Window):
         self.tab_stack.add_titled(self.system_tab_content, "system", "System")
         self.tab_stack.add_titled(
             self.power_controls_tab_content, "power_controls", "Power Controls"
+        )
+        self.tab_stack.add_titled(
+            self.pomodoro_tab_content, "pomodoro", "Pomodoro Settings"
         )
         self.tab_stack.add_titled(self.about_tab_content, "about", "About")
 
@@ -1179,6 +1183,181 @@ class HyprConfGUI(Window):
 
         return scrolled_window
 
+    def create_pomodoro_tab(self):
+        scrolled_window = ScrolledWindow(
+            h_scrollbar_policy="never",
+            v_scrollbar_policy="automatic",
+            h_expand=True,
+            v_expand=True,
+            propagate_width=False,
+            propagate_height=False,
+        )
+
+        vbox = Box(orientation="v", spacing=15, style="margin: 15px;")
+        scrolled_window.add(vbox)
+
+        pomodoro_grid = Gtk.Grid()
+        pomodoro_grid.set_column_spacing(20)
+        pomodoro_grid.set_row_spacing(15)
+        pomodoro_grid.set_margin_bottom(15)
+        vbox.add(pomodoro_grid)
+
+        current_row = 0
+
+        # Timer Settings Section
+        timer_header = Label(markup="<b>Timer Settings</b>", h_align="start")
+        pomodoro_grid.attach(timer_header, 0, current_row, 4, 1)
+        current_row += 1
+
+        # Work minutes
+        work_label = Label(
+            label="Work minutes:", h_align="start", v_align="center"
+        )
+        pomodoro_grid.attach(work_label, 0, current_row, 1, 1)
+        work_adj = Gtk.Adjustment(
+            value=get_bind_var("pomodoro_settings").get("work_minutes", 25),
+            lower=1,
+            upper=180,
+            step_increment=1,
+            page_increment=5,
+        )
+        self.work_minutes_spin = Gtk.SpinButton(
+            adjustment=work_adj,
+            tooltip_text="Duration of work sessions in minutes"
+        )
+        pomodoro_grid.attach(self.work_minutes_spin, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Break minutes
+        break_label = Label(
+            label="Short break minutes:", h_align="start", v_align="center"
+        )
+        pomodoro_grid.attach(break_label, 0, current_row, 1, 1)
+        break_adj = Gtk.Adjustment(
+            value=get_bind_var("pomodoro_settings").get("break_minutes", 5),
+            lower=1,
+            upper=60,
+            step_increment=1,
+            page_increment=5,
+        )
+        self.break_minutes_spin = Gtk.SpinButton(
+            adjustment=break_adj,
+            tooltip_text="Duration of short breaks in minutes"
+        )
+        pomodoro_grid.attach(self.break_minutes_spin, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Long break minutes
+        long_break_label = Label(
+            label="Long break minutes:", h_align="start", v_align="center"
+        )
+        pomodoro_grid.attach(long_break_label, 0, current_row, 1, 1)
+        long_break_adj = Gtk.Adjustment(
+            value=get_bind_var("pomodoro_settings").get("long_break_minutes", 15),
+            lower=1,
+            upper=120,
+            step_increment=1,
+            page_increment=5,
+        )
+        self.long_break_minutes_spin = Gtk.SpinButton(
+            adjustment=long_break_adj,
+            tooltip_text="Duration of long breaks in minutes"
+        )
+        pomodoro_grid.attach(self.long_break_minutes_spin, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Pomodoros per long break
+        long_break_interval_label = Label(
+            label="Pomodoros per long break:", h_align="start", v_align="center"
+        )
+        pomodoro_grid.attach(long_break_interval_label, 0, current_row, 1, 1)
+        long_break_interval_adj = Gtk.Adjustment(
+            value=get_bind_var("pomodoro_settings").get("pomodoros_per_long_break", 4),
+            lower=2,
+            upper=12,
+            step_increment=1,
+            page_increment=2,
+        )
+        self.pomodoros_per_long_break_spin = Gtk.SpinButton(
+            adjustment=long_break_interval_adj,
+            tooltip_text="Number of work sessions before a long break"
+        )
+        pomodoro_grid.attach(self.pomodoros_per_long_break_spin, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Behavior Settings Section
+        behavior_header = Label(markup="<b>Behavior Settings</b>", h_align="start")
+        pomodoro_grid.attach(behavior_header, 0, current_row, 4, 1)
+        current_row += 1
+
+        # Auto start breaks switch
+        auto_break_label = Label(
+            label="Auto start breaks", h_align="start", v_align="center"
+        )
+        pomodoro_grid.attach(auto_break_label, 0, current_row, 1, 1)
+        auto_break_container = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+        )
+        self.auto_start_breaks_switch = Gtk.Switch(
+            active=get_bind_var("pomodoro_settings").get("auto_start_breaks", True),
+            tooltip_text="Automatically start break periods without waiting for user input"
+        )
+        auto_break_container.add(self.auto_start_breaks_switch)
+        pomodoro_grid.attach(auto_break_container, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Auto start pomodoros switch
+        auto_pomodoro_label = Label(
+            label="Auto start pomodoros", h_align="start", v_align="center"
+        )
+        pomodoro_grid.attach(auto_pomodoro_label, 0, current_row, 1, 1)
+        auto_pomodoro_container = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+        )
+        self.auto_start_pomodoros_switch = Gtk.Switch(
+            active=get_bind_var("pomodoro_settings").get("auto_start_pomodoros", True),
+            tooltip_text="Automatically start work periods without waiting for user input"
+        )
+        auto_pomodoro_container.add(self.auto_start_pomodoros_switch)
+        pomodoro_grid.attach(auto_pomodoro_container, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Audio Settings Section
+        audio_header = Label(markup="<b>Audio Settings</b>", h_align="start")
+        pomodoro_grid.attach(audio_header, 0, current_row, 4, 1)
+        current_row += 1
+
+        # Ticking sound switch
+        ticking_label = Label(
+            label="Ticking sound", h_align="start", v_align="center"
+        )
+        pomodoro_grid.attach(ticking_label, 0, current_row, 1, 1)
+        ticking_container = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            halign=Gtk.Align.START,
+            valign=Gtk.Align.CENTER,
+        )
+        self.ticking_sound_switch = Gtk.Switch(
+            active=get_bind_var("pomodoro_settings").get("ticking_sound", False),
+            tooltip_text="Play ticking sound during work periods"
+        )
+        ticking_container.add(self.ticking_sound_switch)
+        pomodoro_grid.attach(ticking_container, 1, current_row, 1, 1)
+        current_row += 1
+
+        # Add informational notes
+        info_label = Label(
+            markup="<small><i>Note: Alarm sounds will always play when transitioning between work and break periods.\nTicking sound only plays during work periods, not during breaks.</i></small>",
+            h_align="start",
+        )
+        pomodoro_grid.attach(info_label, 0, current_row, 4, 1)
+
+        return scrolled_window
+
     def create_about_tab(self):
         vbox = Box(orientation="v", spacing=18, style="margin: 30px;")
         vbox.add(
@@ -1396,6 +1575,18 @@ class HyprConfGUI(Window):
         power_controls["performance_mode_battery_level"] = int(self.performance_level_spin.get_value())
         
         current_bind_vars_snapshot["power_controls"] = power_controls
+
+        # Save pomodoro settings
+        pomodoro_settings = {}
+        pomodoro_settings["work_minutes"] = int(self.work_minutes_spin.get_value())
+        pomodoro_settings["break_minutes"] = int(self.break_minutes_spin.get_value())
+        pomodoro_settings["long_break_minutes"] = int(self.long_break_minutes_spin.get_value())
+        pomodoro_settings["pomodoros_per_long_break"] = int(self.pomodoros_per_long_break_spin.get_value())
+        pomodoro_settings["auto_start_breaks"] = self.auto_start_breaks_switch.get_active()
+        pomodoro_settings["auto_start_pomodoros"] = self.auto_start_pomodoros_switch.get_active()
+        pomodoro_settings["ticking_sound"] = self.ticking_sound_switch.get_active()
+        
+        current_bind_vars_snapshot["pomodoro_settings"] = pomodoro_settings
 
         selected_icon_path = self.selected_face_icon
         replace_lock = self.lock_switch and self.lock_switch.get_active()

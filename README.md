@@ -74,6 +74,7 @@ curl -fsSL https://get.rzzdr.com/rz-shell | bash
     - `noto-fonts-emoji`
     - `nvtop`
     - `playerctl`
+    - `pulseaudio-utils`
     - `swappy`
     - `tesseract`
     - `tesseract-data-eng`

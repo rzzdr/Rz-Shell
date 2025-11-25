@@ -31,6 +31,7 @@ PACKAGES=(
   nvtop
   playerctl
   power-profiles-daemon
+  pulseaudio-utils
   python-fabric-git
   python-gobject
   python-ijson
