@@ -8,6 +8,8 @@
     "<b>feat:</b> Improved dock window matching with tokenization for better app identification.",
     "<b>feat:</b> Refactored brightness control to use percentage values for better UX.",
     "<b>improvement:</b> Enhanced gesture bindings for cleaner Hyprland integration.",
-    "<b>improvement:</b> Added pulseaudio-utils dependency for better audio control."
+    "<b>improvement:</b> Added pulseaudio-utils dependency for better audio control.",
+    "<b>fix:</b> Brightness not appearing in brightnessctl devices",
+    "<b>fix:</b> Endless curls to wttr.in"
   ]
 }
