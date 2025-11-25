@@ -1,4 +1,5 @@
 import subprocess
+import urllib.parse
 
 import gi
 from fabric.widgets.button import Button
@@ -18,9 +19,11 @@ class Weather(Button):
         self.show_all()
         self.enabled = False  # Will be set by apply_component_props
         self.has_weather_data = False
+        self.fetching = False  # Prevent concurrent fetches
+        # Fetch weather every 10 minutes (600 seconds)
         GLib.timeout_add_seconds(600, self.fetch_weather)
-        # Delay initial fetch to allow visibility config to be applied first
-        GLib.timeout_add(100, lambda: self.fetch_weather() or False)
+        # Delay initial fetch to allow visibility config to be applied first (runs only once)
+        GLib.timeout_add(100, self._initial_fetch)
 
     def set_visible(self, visible):
         """Override to track external visibility setting"""
@@ -36,19 +39,28 @@ class Weather(Button):
             super().set_visible(True)
         # If no weather data yet, remain hidden until fetch completes
 
+    def _initial_fetch(self):
+        """Initial fetch that runs only once"""
+        self.fetch_weather()
+        return False  # Don't repeat this timeout
+
     def fetch_weather(self):
+        # Prevent concurrent fetches
+        if self.fetching:
+            return True
+
+        self.fetching = True
         GLib.Thread.new("weather-fetch", self._fetch_weather_thread, None)
         return True
 
     def _fetch_weather_thread(self, user_data):
-
         url = (
             "https://wttr.in/?format=%c+%t"
             if not data.VERTICAL
             else "https://wttr.in/?format=%c"
         )
 
-        tooltip_url = "https://wttr.in/Faridabad?format=%l:+%C,+%t+(%f),+Humidity:+%h,+Wind:+%w"
+        tooltip_url = "https://wttr.in/?format=%l:+%C,+%t+(%f),+Humidity:+%h,+Wind:+%w"
 
         try:
             # Use curl to fetch weather data
@@ -77,7 +89,7 @@ class Weather(Button):
                     if tooltip_result.returncode == 0 and tooltip_result.stdout:
                         tooltip_text = tooltip_result.stdout.strip()
                         GLib.idle_add(self.set_tooltip_text, tooltip_text)
-                    
+
                     GLib.idle_add(self.set_visible, self.enabled)
                     GLib.idle_add(self.label.set_label, weather_data.replace(" ", ""))
             else:
@@ -89,3 +101,6 @@ class Weather(Button):
             print(f"Error fetching weather: {e}")
             GLib.idle_add(self.label.set_markup, f"{icons.cloud_off} Error")
             GLib.idle_add(self.set_visible, False)
+        finally:
+            # Always reset fetching flag when done
+            self.fetching = False
