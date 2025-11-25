@@ -1,7 +1,6 @@
-import urllib.parse
+import subprocess
 
 import gi
-import requests
 from fabric.widgets.button import Button
 from fabric.widgets.label import Label
 from gi.repository import GLib
@@ -17,19 +16,25 @@ class Weather(Button):
         self.label = Label(name="weather-label", markup=icons.loader)
         self.add(self.label)
         self.show_all()
-        self.enabled = True
-        self.session = requests.Session()
+        self.enabled = False  # Will be set by apply_component_props
+        self.has_weather_data = False
         GLib.timeout_add_seconds(600, self.fetch_weather)
-        self.fetch_weather()
+        # Delay initial fetch to allow visibility config to be applied first
+        GLib.timeout_add(100, lambda: self.fetch_weather() or False)
 
     def set_visible(self, visible):
         """Override to track external visibility setting"""
         self.enabled = visible
 
-        if visible and hasattr(self, 'has_weather_data') and self.has_weather_data:
+        # If being disabled, always hide
+        if not visible:
+            super().set_visible(False)
+            return
+
+        # If being enabled, only show if we have weather data
+        if hasattr(self, "has_weather_data") and self.has_weather_data:
             super().set_visible(True)
-        else:
-            super().set_visible(visible)
+        # If no weather data yet, remain hidden until fetch completes
 
     def fetch_weather(self):
         GLib.Thread.new("weather-fetch", self._fetch_weather_thread, None)
@@ -37,26 +42,42 @@ class Weather(Button):
 
     def _fetch_weather_thread(self, user_data):
 
-        url = "https://wttr.in/Faridabad?format=%c+%t" if not data.VERTICAL else "https://wttr.in/Faridabad?format=%c"
+        url = (
+            "https://wttr.in/?format=%c+%t"
+            if not data.VERTICAL
+            else "https://wttr.in/?format=%c"
+        )
 
         tooltip_url = "https://wttr.in/Faridabad?format=%l:+%C,+%t+(%f),+Humidity:+%h,+Wind:+%w"
 
         try:
-            response = self.session.get(url, timeout=5)
-            if response.ok:
-                weather_data = response.text.strip()
+            # Use curl to fetch weather data
+            result = subprocess.run(
+                ["curl", "-sf", "--max-time", "5", url],
+                capture_output=True,
+                text=True,
+                timeout=6,
+            )
+
+            if result.returncode == 0 and result.stdout:
+                weather_data = result.stdout.strip()
                 if "Unknown" in weather_data:
                     self.has_weather_data = False
                     GLib.idle_add(self.set_visible, False)
                 else:
                     self.has_weather_data = True
 
-                    tooltip_response = self.session.get(tooltip_url, timeout=5)
-                    if tooltip_response.ok:
-                        tooltip_text = tooltip_response.text.strip()
+                    # Fetch tooltip data
+                    tooltip_result = subprocess.run(
+                        ["curl", "-sf", "--max-time", "5", tooltip_url],
+                        capture_output=True,
+                        text=True,
+                        timeout=6,
+                    )
+                    if tooltip_result.returncode == 0 and tooltip_result.stdout:
+                        tooltip_text = tooltip_result.stdout.strip()
                         GLib.idle_add(self.set_tooltip_text, tooltip_text)
                     
-
                     GLib.idle_add(self.set_visible, self.enabled)
                     GLib.idle_add(self.label.set_label, weather_data.replace(" ", ""))
             else:
