@@ -1,8 +1,13 @@
 {
-	"version": "0.0.58", 
+	"version": "0.0.59", 
   "pkg_update": true,
 	"changelog": [
-    "<b>fix:</b> awwiw's exec-once to exec.",
-    "<b>fix:</b> ddcutil support (<a href='https://github.com/rzzdr/Rz-Shell/commit/1184d8314c6be7eef15204dad4b929fcb4db0cc6'>#1184d83</a>)"
+    "<b>feat:</b> Complete Pomodoro timer implementation with audio support and configurable settings.",
+    "<b>feat:</b> Advanced power management controls with auto-dim, low battery notifications, and suspend options.",
+    "<b>feat:</b> Enhanced CaffeineButton with multi-monitor support and global keybind toggle.",
+    "<b>feat:</b> Improved dock window matching with tokenization for better app identification.",
+    "<b>feat:</b> Refactored brightness control to use percentage values for better UX.",
+    "<b>improvement:</b> Enhanced gesture bindings for cleaner Hyprland integration.",
+    "<b>improvement:</b> Added pulseaudio-utils dependency for better audio control."
   ]
 }
